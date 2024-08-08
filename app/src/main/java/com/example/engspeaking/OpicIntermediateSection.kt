@@ -61,6 +61,7 @@ fun OpicIntermediateSection(navController: NavHostController) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
+
                 actions = {
                     IconButton(onClick = { /* TODO: Handle more options */ }) {
                         Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More")
