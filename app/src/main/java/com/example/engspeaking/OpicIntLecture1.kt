@@ -49,9 +49,8 @@ import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OpicIntermediateSection(navController: NavHostController) {
+fun OpicIntLecture1(navController: NavHostController) {
     var selectedTabIndex by remember { mutableStateOf(0) }
-    var selectedProficiencyLevel by remember { mutableStateOf("INTERMEDIATE") }
 
     Scaffold(
         topBar = {
@@ -134,41 +133,82 @@ fun OpicIntermediateSection(navController: NavHostController) {
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                OiProficiencyLevelCard("NOVICE", navController, "opic_novice", selectedProficiencyLevel == "NOVICE") {
-                    selectedProficiencyLevel = "NOVICE"
-                }
-                OiProficiencyLevelCard("INTERMEDIATE", navController, "opic_intermediate", selectedProficiencyLevel == "INTERMEDIATE") {
-                    selectedProficiencyLevel = "INTERMEDIATE"
-                }
-                OiProficiencyLevelCard("ADVANCED", navController, "opic_advanced", selectedProficiencyLevel == "ADVANCED") {
-                    selectedProficiencyLevel = "ADVANCED"
-                }
+                ProficiencyLevelCard(
+                    "NOVICE",
+                    navController,
+                    "novice_route",
+                    Modifier.weight(1f)
+                )
+                ProficiencyLevelCard(
+                    "INTERMEDIATE",
+                    navController,
+                    "intermediate_route",
+                    Modifier.weight(1f)
+                )
+                ProficiencyLevelCard(
+                    "ADVANCED",
+                    navController,
+                    "advanced_route",
+                    Modifier.weight(1f)
+                )
             }
 
-            // Latest Lectures
-            LazyColumn(
+            // Video Placeholder
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .height(200.dp) // Height for the video placeholder
+                    .background(Color.Gray, shape = RoundedCornerShape(8.dp))
+                    .clickable { navController.navigate("opic_int_lecture1") }, // Link to the video
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    "Video Placeholder",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+
+            // Lecture Content
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(8.dp)
+                    .padding(16.dp)
             ) {
-                item {
-                    Text("최신 강의 소개", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                }
-                item {
-                    LectureCard("Lecture 0", "Updated today", Modifier.fillMaxWidth()) // 첫 번째 항목
-                }
-                items((1..9 step 2).toList()) { index -> // 나머지 항목들을 두 개씩 한 줄에 표시
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        OiLectureCard("Lecture $index", "Updated today", Modifier.weight(1f), navController = navController, route = "opic_int_lecture1")
-                        Spacer(modifier = Modifier.width(8.dp))
-                        if (index + 1 <= 9) {
-                            OiLectureCard("Lecture ${index + 1}", "Updated today", Modifier.weight(1f), navController = navController, route = "opic_int_lecture1")
-                        }
+                Text("오픽 | 주제 : Presentation", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                LectureContentCard(
+                    title = "Sample 강의 by Katie",
+                    subtitle = "Updated Today",
+                    description = "강의 내용:\n다운로드 [강좌 구매시]\n강의 정리 PDF | 학습 자료 | 기출-유사문제 및 답안",
+                    navController = navController,
+                    route = "opic_int_lecture1"
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    "강좌 구매\n200,000 원 | 총 20개 강좌",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Latest Lectures
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp)
+                ) {
+                    items((1..9).toList()) { index ->
+                        OiLectureCardPreview("Title $index", "Updated today")
                     }
                 }
             }
@@ -177,36 +217,34 @@ fun OpicIntermediateSection(navController: NavHostController) {
 }
 
 @Composable
-fun OiProficiencyLevelCard(level: String, navController: NavHostController, route: String, selected: Boolean = false, onClick: () -> Unit) {
+fun ProficiencyLevelCard(level: String, navController: NavHostController, route: String, modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
-            .clickable {
-                onClick()
-                navController.navigate(route)
-            }
-            .padding(8.dp)
+            .clickable { navController.navigate(route) }
             .background(Color(0xFFE0E0E0), shape = RoundedCornerShape(8.dp))
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(level, fontSize = 12.sp, fontWeight = FontWeight.Bold) // Adjust font size to 12.sp
-            if (selected) {
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(imageVector = Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp))
+            Text(level, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            if (level == "INTERMEDIATE") {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp).padding(start = 4.dp)
+                )
             }
         }
     }
 }
 
 @Composable
-fun OiLectureCard(title: String, subtitle: String, modifier: Modifier = Modifier, navController: NavHostController, // Add NavHostController
-                  route: String) {
+fun OiLectureCardPreview(title: String, subtitle: String, modifier: Modifier = Modifier) {
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
             .padding(8.dp)
-            .clickable { navController.navigate(route) }
+            .fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
@@ -216,9 +254,36 @@ fun OiLectureCard(title: String, subtitle: String, modifier: Modifier = Modifier
     }
 }
 
+@Composable
+fun LectureContentCard(
+    title: String,
+    subtitle: String,
+    description: String,
+    navController: NavHostController,
+    route: String
+) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable { navController.navigate(route) }
+            .fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(subtitle, fontSize = 14.sp, color = Color.Gray)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(description, fontSize = 14.sp, color = Color.Black)
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
-fun OpicIntermediateSectionPreview() {
+fun OpicIntLecture1Preview() {
     val navController = rememberNavController()
-    OpicIntermediateSection(navController = navController)
+    OpicIntLecture1(navController = navController)
 }
+
+

@@ -81,6 +81,7 @@ class Mainboard : ComponentActivity() {
                     composable("toeic_exam_schedule") { CourseDetailScreen("토스 시험일정") }
                     composable("today_english_expression") { CourseDetailScreen("오늘의 영어표현") }
                     composable("opic_intermediate") { OpicIntermediateSection(navController = navController) }
+                    composable("opic_int_lecture1") { OpicIntLecture1(navController = navController) }
                 }
             }
         }
@@ -266,7 +267,7 @@ fun OPICSection(navController: NavHostController) {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item { LevelCard(level = "Novice") }
-            item { LevelCard(level = "Intermediate") }
+            item { LevelCard(level = "Intermediate", modifier = Modifier.clickable { navController.navigate("opic_intermediate") } ) }
             item { LevelCard(level = "Advanced") }
         }
 
@@ -404,7 +405,7 @@ fun BusinessEnglishSection(navController: NavHostController) {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item { LevelCard(level = "Beginner") }
-            item { LevelCard(level = "Intermediate") }
+            item { LevelCard(level = "Intermediate", modifier = Modifier.clickable { navController.navigate("opic_intermediate")}) }
             item { LevelCard(level = "Advanced") }
         }
 
@@ -437,7 +438,7 @@ fun BusinessEnglishSection(navController: NavHostController) {
 }
 
 @Composable
-fun LevelCard(level: String) {
+fun LevelCard(level: String, modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier
             .padding(8.dp)
