@@ -46,11 +46,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.engspeaking.components.ConversationLevelCard
+import com.example.engspeaking.components.ConLectureCard
+import com.example.engspeaking.components.ConFisrtLecCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConversationSection(navController: NavHostController) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTabIndex by remember { mutableStateOf(2) }
+
 
     Scaffold(
         topBar = {
@@ -133,11 +137,39 @@ fun ConversationSection(navController: NavHostController) {
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ConversationProficiencyLevelCard("초급", navController, "beginner_route")
-                ConversationProficiencyLevelCard("중급", navController, "intermediate_route")
-                ConversationProficiencyLevelCard("고급", navController, "advanced_route")
+                com.example.engspeaking.components.ConversationLevelCard(
+                    "초급",
+                    navController,
+                    "con_basic",
+                    selected = false, // 선택 상태 관리가 필요 없으므로 고정값으로 설정
+                    modifier = Modifier.width(80.dp)
+                ) {
+                    // 선택 상태를 업데이트할 필요가 없으므로 이 부분도 삭제 가능
+                    navController.navigate("con_basic")
+                }
+                com.example.engspeaking.components.ConversationLevelCard(
+                    "중급",
+                    navController,
+                    "con_intermediate",
+                    selected = false, // 선택 상태 관리가 필요 없으므로 고정값으로 설정
+                    modifier = Modifier.width(80.dp)
+                ) {
+                    // 선택 상태를 업데이트할 필요가 없으므로 이 부분도 삭제 가능
+                    navController.navigate("con_intermediate")
+                }
+                com.example.engspeaking.components.ConversationLevelCard(
+                    "고급",
+                    navController,
+                    "con_advanced",
+                    selected = false, // 선택 상태 관리가 필요 없으므로 고정값으로 설정
+                    modifier = Modifier.width(80.dp)
+                ) {
+                    // 선택 상태를 업데이트할 필요가 없으므로 이 부분도 삭제 가능
+                    navController.navigate("con_advanced")
+                }
             }
 
+            val navController = rememberNavController()
             // Latest Lectures
             LazyColumn(
                 modifier = Modifier
@@ -148,7 +180,7 @@ fun ConversationSection(navController: NavHostController) {
                     Text("최신 강의 소개", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 item {
-                    ConversationLectureCard("Lecture 0", "Updated today", Modifier.fillMaxWidth()) // 첫 번째 항목
+                    ConFisrtLecCard("Lecture 0", "Updated today", Modifier.fillMaxWidth(), navController = navController) // 첫 번째 항목
                 }
                 items((1..9 step 2).toList()) { index -> // 나머지 항목들을 두 개씩 한 줄에 표시
                     Row(
@@ -157,43 +189,14 @@ fun ConversationSection(navController: NavHostController) {
                             .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        ConversationLectureCard("Lecture $index", "Updated today", Modifier.weight(1f))
+                        ConLectureCard("Lecture $index", "Updated today", Modifier.weight(1f), navController = navController)
                         Spacer(modifier = Modifier.width(8.dp))
                         if (index + 1 <= 9) {
-                            ConversationLectureCard("Lecture ${index + 1}", "Updated today", Modifier.weight(1f))
+                            ConLectureCard("Lecture ${index + 1}", "Updated today", Modifier.weight(1f), navController = navController)
                         }
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun ConversationProficiencyLevelCard(level: String, navController: NavHostController, route: String) {
-    Box(
-        modifier = Modifier
-            .clickable { navController.navigate(route) }
-            .padding(8.dp)
-            .background(Color(0xFFE0E0E0), shape = RoundedCornerShape(8.dp))
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(level, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-    }
-}
-
-@Composable
-fun ConversationLectureCard(title: String, subtitle: String, modifier: Modifier = Modifier) {
-    Card(
-        shape = RoundedCornerShape(8.dp),
-        modifier = modifier
-            .padding(8.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(subtitle, fontSize = 14.sp, color = Color.Gray)
         }
     }
 }

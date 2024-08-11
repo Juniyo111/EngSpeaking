@@ -46,11 +46,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.engspeaking.components.BusTopicCard
+import com.example.engspeaking.components.TosLectureCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BusinessSection(navController: NavHostController) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTabIndex by remember { mutableStateOf(3) }
 
     Scaffold(
         topBar = {
@@ -133,11 +135,48 @@ fun BusinessSection(navController: NavHostController) {
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                BusinessProficiencyLevelCard("인터뷰", navController, "interview_route")
-                BusinessProficiencyLevelCard("발표", navController, "presentation_route")
-                BusinessProficiencyLevelCard("회의", navController, "meeting_route")
-                BusinessProficiencyLevelCard("사무 업무", navController, "office_route")
+                com.example.engspeaking.components.BusTopicCard(
+                    "인터뷰",
+                    navController,
+                    "bus_interview",
+                    selected = false, // 선택 상태 관리가 필요 없으므로 고정값으로 설정
+                    modifier = Modifier.width(80.dp)
+                ) {
+                    // 선택 상태를 업데이트할 필요가 없으므로 이 부분도 삭제 가능
+                    navController.navigate("bus_interview")
+                }
+                com.example.engspeaking.components.BusTopicCard(
+                    "발표",
+                    navController,
+                    "bus_presentation",
+                    selected = false, // 선택 상태 관리가 필요 없으므로 고정값으로 설정
+                    modifier = Modifier.width(80.dp)
+                ) {
+                    // 선택 상태를 업데이트할 필요가 없으므로 이 부분도 삭제 가능
+                    navController.navigate("bus_presentation")
+                }
+                com.example.engspeaking.components.BusTopicCard(
+                    "회의",
+                    navController,
+                    "bus_meeting",
+                    selected = false, // 선택 상태 관리가 필요 없으므로 고정값으로 설정
+                    modifier = Modifier.width(80.dp)
+                ) {
+                    // 선택 상태를 업데이트할 필요가 없으므로 이 부분도 삭제 가능
+                    navController.navigate("bus_meeting")
+                }
+                com.example.engspeaking.components.BusTopicCard(
+                    "일반 사무",
+                    navController,
+                    "bus_office",
+                    selected = false, // 선택 상태 관리가 필요 없으므로 고정값으로 설정
+                    modifier = Modifier.width(80.dp)
+                ) {
+                    // 선택 상태를 업데이트할 필요가 없으므로 이 부분도 삭제 가능
+                    navController.navigate("bus_office")
+                }
             }
+
 
             // Latest Lectures
             LazyColumn(

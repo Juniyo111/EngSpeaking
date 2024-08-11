@@ -46,6 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.engspeaking.components.OiProficiencyLevelCard
+import com.example.engspeaking.components.OiLectureCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -173,46 +175,6 @@ fun OpicIntermediateSection(navController: NavHostController) {
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun OiProficiencyLevelCard(level: String, navController: NavHostController, route: String, selected: Boolean = false, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .clickable {
-                onClick()
-                navController.navigate(route)
-            }
-            .padding(8.dp)
-            .background(Color(0xFFE0E0E0), shape = RoundedCornerShape(8.dp))
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(level, fontSize = 12.sp, fontWeight = FontWeight.Bold) // Adjust font size to 12.sp
-            if (selected) {
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(imageVector = Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp))
-            }
-        }
-    }
-}
-
-@Composable
-fun OiLectureCard(title: String, subtitle: String, modifier: Modifier = Modifier, navController: NavHostController, // Add NavHostController
-                  route: String) {
-    Card(
-        shape = RoundedCornerShape(8.dp),
-        modifier = modifier
-            .padding(8.dp)
-            .clickable { navController.navigate(route) }
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(subtitle, fontSize = 14.sp, color = Color.Gray)
         }
     }
 }

@@ -72,7 +72,7 @@ class Mainboard : ComponentActivity() {
                     composable("terms_of_service") { TermsOfServiceScreen() }
                     composable("privacy_policy") { PrivacyPolicyScreen() }
                     composable("hobbies_and_interests") { CourseDetailScreen("Hobbies and Interests") }
-                    composable("presentation") { CourseDetailScreen("Presentation") }
+                    composable("bus_presentation") { CourseDetailScreen("Presentation") }
                     composable("opic") { OpicSection(navController = navController) }
                     composable("toeic") { TosSection(navController = navController) }
                     composable("conversation") { ConversationSection(navController = navController) }
@@ -82,12 +82,25 @@ class Mainboard : ComponentActivity() {
                     composable("today_english_expression") { CourseDetailScreen("오늘의 영어표현") }
                     composable("opic_intermediate") { OpicIntermediateSection(navController = navController) }
                     composable("opic_int_lecture1") { OpicIntLecture1(navController = navController) }
+                    composable("opic_novice") { OpicNoviceSection(navController = navController) }
+                    composable("opic_advanced") { OpicAdvancedSection(navController = navController)}
+                    composable("tos_novice") { TosNoviceSection(navController = navController)}
+                    composable("tos_intermediate") { TosNoviceSection(navController = navController)}
+                    composable("tos_advanced") { TosNoviceSection(navController = navController)}
+                    composable("bus_interview") { BusInterviewSection(navController = navController)}
+                    composable("bus_presentation") { BusPresentationSection(navController = navController)}
+                    composable("bus_meeting") { BusMeetingSection(navController = navController)}
+                    composable("bus_office") { BusOfficeSection(navController = navController)}
+                    composable("con_basic") { ConBasicSection(navController = navController)}
+                    composable("con_intermediate") { ConIntermediateSection(navController = navController)}
+                    composable("con_advanced") { ConAdvancedSection(navController = navController)}
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
     Scaffold(
