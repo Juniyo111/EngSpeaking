@@ -46,13 +46,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.engspeaking.components.ConversationLevelCard
+import com.example.engspeaking.components.ConversationLectureCard
 import com.example.engspeaking.components.TosLectureCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConAdvancedSection(navController: NavHostController) {
     var selectedTabIndex by remember { mutableStateOf(2) }
+    var selectedProficiencyLevel by remember { mutableStateOf("고급")}
 
     Scaffold(
         topBar = {
@@ -135,9 +136,30 @@ fun ConAdvancedSection(navController: NavHostController) {
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ConversationLevelCard("초급", navController, "con_basic")
-                ConversationLevelCard("중급", navController, "con_intermediate")
-                ConversationLevelCard("고급", navController, "con_advanced")
+                com.example.engspeaking.components.ConversationLevelCard(
+                    "초급",
+                    navController,
+                    "con_basic",
+                    selectedProficiencyLevel == "초급"
+                ) {
+                    selectedProficiencyLevel = "초급"
+                }
+                com.example.engspeaking.components.ConversationLevelCard(
+                    "중급",
+                    navController,
+                    "con_intermediate",
+                    selectedProficiencyLevel == "중급"
+                ) {
+                    selectedProficiencyLevel = "중급"
+                }
+                com.example.engspeaking.components.ConversationLevelCard(
+                    "고급",
+                    navController,
+                    "con_advanced",
+                    selectedProficiencyLevel == "고급"
+                ) {
+                    selectedProficiencyLevel = "고급"
+                }
             }
 
             // Latest Lectures
@@ -167,21 +189,6 @@ fun ConAdvancedSection(navController: NavHostController) {
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun ConversationLectureCard(title: String, subtitle: String, modifier: Modifier = Modifier) {
-    Card(
-        shape = RoundedCornerShape(8.dp),
-        modifier = modifier
-            .padding(8.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(subtitle, fontSize = 14.sp, color = Color.Gray)
         }
     }
 }

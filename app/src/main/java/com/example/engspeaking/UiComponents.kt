@@ -203,3 +203,31 @@ fun ConFisrtLecCard(
         }
     }
 }
+
+@Composable
+fun ConversationLectureCard(
+    title: String,
+    subtitle: String,
+    modifier: Modifier = Modifier,
+    navController: NavHostController? = null, // Optional로 설정해서 필요한 경우에만 사용
+    route: String? = null // Optional로 설정해서 필요한 경우에만 사용
+) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        modifier = modifier
+            .padding(8.dp)
+            .clickable {
+                // Optional로 설정한 navController와 route가 null이 아니면 네비게이션
+                if (navController != null && route != null) {
+                    navController.navigate(route)
+                }
+            }
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(subtitle, fontSize = 14.sp, color = Color.Gray)
+        }
+    }
+}
+

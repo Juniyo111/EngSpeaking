@@ -189,10 +189,10 @@ fun ConversationSection(navController: NavHostController) {
                             .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        ConLectureCard("Lecture $index", "Updated today", Modifier.weight(1f), navController = navController)
+                        ConLectureCard("Lecture $index", "Updated today", Modifier.weight(1f), navController = navController, route = "lecture_detail/$index")
                         Spacer(modifier = Modifier.width(8.dp))
                         if (index + 1 <= 9) {
-                            ConLectureCard("Lecture ${index + 1}", "Updated today", Modifier.weight(1f), navController = navController)
+                            ConLectureCard("Lecture ${index + 1}", "Updated today", Modifier.weight(1f), navController = navController, route = "lecture_detail/${index + 1}")
                         }
                     }
                 }
