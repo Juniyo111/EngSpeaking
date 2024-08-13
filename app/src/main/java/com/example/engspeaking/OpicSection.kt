@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,13 +41,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.engspeaking.components.OpicFirstLecCard
-import com.example.engspeaking.components.OpicLectureCard
+import com.example.engspeaking.components.LectureCard
+import com.example.engspeaking.components.OpicLevelCard
+import com.example.engspeaking.components.FirstLecCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OpicSection(navController: NavHostController) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     Scaffold(
         topBar = {
@@ -163,7 +165,7 @@ fun OpicSection(navController: NavHostController) {
             }
 
             // 강의 제목 리스트
-            val OpiclectureTitles = listOf(
+            val lectureTitles = listOf(
                 "Introduction to Business English",
                 "Advanced Presentation Skills",
                 "Meeting Etiquette",
@@ -183,37 +185,37 @@ fun OpicSection(navController: NavHostController) {
                     Text("최신 강의 소개", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 item {
-                    OpicFirstLecCard(
-                        title = OpiclectureTitles[0],
+                    FirstLecCard(
+                        title = lectureTitles[0],
                         subtitle = "Updated today",
                         navController = navController,
-                        OpiclectureId = "0",
+                        lectureId = "0",
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-                items(OpiclectureTitles) { title ->
-                    val index = OpiclectureTitles.indexOf(title)
+                items(lectureTitles) { title ->
+                    val index = lectureTitles.indexOf(title)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        OpicLectureCard(
+                        LectureCard(
                             title = title,
                             subtitle = "Updated today",
                             modifier = Modifier.weight(1f),
                             navController = navController,
-                            OpiclectureId = index.toString()
+                            lectureId = index.toString()
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        if (index + 1 < OpiclectureTitles.size) {
-                            OpicLectureCard(
-                                title = OpiclectureTitles[index + 1],
+                        if (index + 1 < lectureTitles.size) {
+                            LectureCard(
+                                title = lectureTitles[index + 1],
                                 subtitle = "Updated today",
                                 modifier = Modifier.weight(1f),
                                 navController = navController,
-                                OpiclectureId = (index + 1).toString()
+                                lectureId = (index + 1).toString()
                             )
                         }
                     }

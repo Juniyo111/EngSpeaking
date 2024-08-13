@@ -55,8 +55,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.engspeaking.LectureDetailScreen
+import com.example.engspeaking.LectureDetailSection
 import com.example.engspeaking.ui.theme.EngSpeakingTheme
+
+
 
 class Mainboard : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,7 +84,6 @@ class Mainboard : ComponentActivity() {
                     composable("toeic_exam_schedule") { CourseDetailScreen("토스 시험일정") }
                     composable("today_english_expression") { CourseDetailScreen("오늘의 영어표현") }
                     composable("opic_intermediate") { OpicIntermediateSection(navController = navController) }
-                    composable("opic_int_lecture1") { OpicIntLecture1(navController = navController) }
                     composable("opic_novice") { OpicNoviceSection(navController = navController) }
                     composable("opic_advanced") { OpicAdvancedSection(navController = navController)}
                     composable("tos_novice") { TosNoviceSection(navController = navController)}
@@ -95,38 +96,24 @@ class Mainboard : ComponentActivity() {
                     composable("con_basic") { ConBasicSection(navController = navController)}
                     composable("con_intermediate") { ConIntermediateSection(navController = navController)}
                     composable("con_advanced") { ConAdvancedSection(navController = navController)}
-                    composable("conversation") { EngSpeakingCourseSection(navController = navController) }
+                    composable("conversation") { ConversationSection(navController = navController) }
                     composable("opic") { OPICSectionMain(navController = navController) }
                     composable("toeic") { TOEICSection(navController = navController) }
                     composable("business") { BusinessEnglishSection(navController = navController) }
                     composable("latest_lecture") { LatestLectureSection(navController = navController) }
                     composable("speaking_material") { SpeakingStudyMaterialSection(navController = navController) }
-                    // Conlecture 경로
-                    composable("Conlecture/{ConlectureId}/{ConlectureTitle}") { backStackEntry ->
-                        val ConlectureId = backStackEntry.arguments?.getString("ConlectureId")
-                        val ConlectureTitle = backStackEntry.arguments?.getString("ConlectureTitle")
-                        LectureDetailScreen(navController = navController, lectureId = ConlectureId, lectureTitle = ConlectureTitle)
-                    }
+                    composable("opic_exam_schedule") { OpicTestSchedule() }
+                    composable("toeic_exam_schedule") { ToeicTestSchedule() }
 
-                    // Buslecture 경로
-                    composable("Buslecture/{BuslectureId}/{BuslectureTitle}") { backStackEntry ->
-                        val BuslectureId = backStackEntry.arguments?.getString("BuslectureId")
-                        val BuslectureTitle = backStackEntry.arguments?.getString("BuslectureTitle")
-                        LectureDetailScreen(navController = navController, lectureId = BuslectureId, lectureTitle = BuslectureTitle)
-                    }
 
-                    // Opiclecture 경로
-                    composable("Opiclecture/{OpiclectureId}/{OpiclectureTitle}") { backStackEntry ->
-                        val OpiclectureId = backStackEntry.arguments?.getString("OpiclectureId")
-                        val OpiclectureTitle = backStackEntry.arguments?.getString("OpiclectureTitle")
-                        LectureDetailScreen(navController = navController, lectureId = OpiclectureId, lectureTitle = OpiclectureTitle)
-                    }
-
-                    // Toslecture 경로
-                    composable("Toslecture/{ToslectureId}/{ToslectureTitle}") { backStackEntry ->
-                        val ToslectureId = backStackEntry.arguments?.getString("ToslectureId")
-                        val ToslectureTitle = backStackEntry.arguments?.getString("ToslectureTitle")
-                        LectureDetailScreen(navController = navController, lectureId = ToslectureId, lectureTitle = ToslectureTitle)
+                    composable("LectureDetailSection/{lectureId}/{lectureTitle}") { backStackEntry ->
+                        val lectureId = backStackEntry.arguments?.getString("lectureId")
+                        val lectureTitle = backStackEntry.arguments?.getString("lectureTitle")
+                        LectureDetailSection(
+                            navController = navController,
+                            lectureId = lectureId,
+                            lectureTitle = lectureTitle
+                        )
                     }
                 }
             }
@@ -277,8 +264,53 @@ fun CourseItem(navController: NavHostController, title: String, route: String, i
     }
 }
 
+// CourseCard 함수 정의
+@Composable
+fun CourseCard(
+    navController: NavHostController,
+    lectureId: String,
+    lectureTitle: String,
+    image: Painter,
+    title: String,
+    description: String
+) {
+    Column(
+        modifier = Modifier
+            .width(200.dp)
+            .background(Color.White, RoundedCornerShape(8.dp))
+            .clickable { navController.navigate("lecture/$lectureId/$lectureTitle") }
+            .padding(16.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = image,
+                contentDescription = null,
+                modifier = Modifier.size(64.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text(text = title, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black)
+                Text(text = description, fontSize = 14.sp, color = Color.Gray)
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        IconButton(
+            onClick = { /* Play video */ },
+            modifier = Modifier.align(Alignment.End)
+        ) {
+            Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Play", tint = Color.Black)
+        }
+    }
+}
+
+// OPICSectionMain 함수 정의
 @Composable
 fun OPICSectionMain(navController: NavHostController) {
+    val lectureTitles = listOf(
+        "좋아하는 음악 또는 가수 묘사",
+        "현재 살고 있는 집 묘사"
+    )
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -313,9 +345,9 @@ fun OPICSectionMain(navController: NavHostController) {
                 .padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item { LevelCard(level = "Novice") }
+            item { LevelCard(level = "Novice", modifier = Modifier.clickable { navController.navigate("opic_novice") } ) }
             item { LevelCard(level = "Intermediate", modifier = Modifier.clickable { navController.navigate("opic_intermediate") } ) }
-            item { LevelCard(level = "Advanced") }
+            item { LevelCard(level = "Advanced", modifier = Modifier.clickable { navController.navigate("opic_advanced") } ) }
         }
 
         LazyRow(
@@ -324,36 +356,46 @@ fun OPICSectionMain(navController: NavHostController) {
                 .padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            // 첫 번째 강의 카드
             item {
                 CourseCard(
                     navController = navController,
-                    route = "opic_sample1",
+                    lectureId = "1",  // 강의 ID
+                    lectureTitle = lectureTitles[0],  // 첫 번째 강의 제목
                     image = painterResource(id = android.R.drawable.ic_menu_gallery),
-                    title = "강사 1",
-                    description = "샘플 | 주제: 일상 생활"
+                    title = "강사 1",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
+                    description = "샘플 | 주제: 건강"
                 )
             }
+            // 두 번째 강의 카드
             item {
                 CourseCard(
                     navController = navController,
-                    route = "opic_sample2",
+                    lectureId = "1",  // 강의 ID
+                    lectureTitle = lectureTitles[1],  // 두 번째 강의 제목
                     image = painterResource(id = android.R.drawable.ic_menu_gallery),
-                    title = "강사 2",
-                    description = "샘플 | 주제: 일상 생활"
+                    title = "강사 1",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
+                    description = "샘플 | 주제: 운동"
                 )
             }
         }
     }
 }
 
+// TOEIC Section 함수 정의
 @Composable
 fun TOEICSection(navController: NavHostController) {
+    val lectureTitles = listOf(
+        "사진 묘사",
+        "듣고 질문에 답하기"
+    )
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
             .background(Color.LightGray, RoundedCornerShape(8.dp))
-            .clickable { navController.navigate("toeic") }
+            .clickable { navController.navigate("opic") }
     ) {
         Row(
             modifier = Modifier
@@ -382,9 +424,9 @@ fun TOEICSection(navController: NavHostController) {
                 .padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item { LevelCard(level = "Beginner") }
-            item { LevelCard(level = "Intermediate") }
-            item { LevelCard(level = "Advanced") }
+            item { LevelCard(level = "Novice", modifier = Modifier.clickable { navController.navigate("opic_novice") } ) }
+            item { LevelCard(level = "Intermediate", modifier = Modifier.clickable { navController.navigate("opic_intermediate") } ) }
+            item { LevelCard(level = "Advanced", modifier = Modifier.clickable { navController.navigate("opic_advanced") } ) }
         }
 
         LazyRow(
@@ -393,36 +435,46 @@ fun TOEICSection(navController: NavHostController) {
                 .padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            // 첫 번째 강의 카드
             item {
                 CourseCard(
                     navController = navController,
-                    route = "toeic_sample1",
+                    lectureId = "1",  // 강의 ID
+                    lectureTitle = lectureTitles[0],  // 첫 번째 강의 제목
                     image = painterResource(id = android.R.drawable.ic_menu_gallery),
-                    title = "강사 1",
-                    description = "샘플 | 주제: 일상 생활"
+                    title = "강사 1",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
+                    description = "샘플 | 주제: 여행 질문"
                 )
             }
+            // 두 번째 강의 카드
             item {
                 CourseCard(
                     navController = navController,
-                    route = "toeic_sample2",
+                    lectureId = "1",  // 강의 ID
+                    lectureTitle = lectureTitles[1],  // 두 번째 강의 제목
                     image = painterResource(id = android.R.drawable.ic_menu_gallery),
-                    title = "강사 2",
-                    description = "샘플 | 주제: 일상 생활"
+                    title = "강사 1",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
+                    description = "샘플 | 주제: 대중 교통 질문"
                 )
             }
         }
     }
 }
 
+// Business Section 함수 정의
 @Composable
 fun BusinessEnglishSection(navController: NavHostController) {
+    val lectureTitles = listOf(
+        "비즈니스 영어 입문",
+        "발표"
+    )
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
             .background(Color.LightGray, RoundedCornerShape(8.dp))
-            .clickable { navController.navigate("business") }
+            .clickable { navController.navigate("opic") }
     ) {
         Row(
             modifier = Modifier
@@ -451,9 +503,9 @@ fun BusinessEnglishSection(navController: NavHostController) {
                 .padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item { LevelCard(level = "Beginner") }
-            item { LevelCard(level = "Intermediate", modifier = Modifier.clickable { navController.navigate("opic_intermediate")}) }
-            item { LevelCard(level = "Advanced") }
+            item { LevelCard(level = "인터뷰", modifier = Modifier.clickable { navController.navigate("bus_interview") } ) }
+            item { LevelCard(level = "발표", modifier = Modifier.clickable { navController.navigate("bus_presentation") } ) }
+            item { LevelCard(level = "회의", modifier = Modifier.clickable { navController.navigate("bus_meeting") } ) }
         }
 
         LazyRow(
@@ -462,22 +514,26 @@ fun BusinessEnglishSection(navController: NavHostController) {
                 .padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            // 첫 번째 강의 카드
             item {
                 CourseCard(
                     navController = navController,
-                    route = "business_sample1",
+                    lectureId = "1",  // 강의 ID
+                    lectureTitle = lectureTitles[0],  // 첫 번째 강의 제목
                     image = painterResource(id = android.R.drawable.ic_menu_gallery),
-                    title = "강사 1",
-                    description = "샘플 | 주제: 일상 생활"
+                    title = "강사 1",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
+                    description = "샘플 | 주제: 인터뷰"
                 )
             }
+            // 두 번째 강의 카드
             item {
                 CourseCard(
                     navController = navController,
-                    route = "business_sample2",
+                    lectureId = "1",  // 강의 ID
+                    lectureTitle = lectureTitles[1],  // 두 번째 강의 제목
                     image = painterResource(id = android.R.drawable.ic_menu_gallery),
-                    title = "강사 2",
-                    description = "샘플 | 주제: 일상 생활"
+                    title = "강사 1",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
+                    description = "샘플 | 주제: 발표"
                 )
             }
         }
@@ -582,7 +638,7 @@ fun LectureItem(navController: NavHostController, title: String, route: String) 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Today • 23 min", fontSize = 12.sp, color = Color.Gray)
+                    Text("오늘 • 23 min", fontSize = 12.sp, color = Color.Gray)
                 }
             }
         }
@@ -623,8 +679,8 @@ fun SpeakingStudyMaterialSection(navController: NavHostController) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                item { StudyMaterialItem(navController, "오픽 시험일정", "opic_exam_schedule") }
-                item { StudyMaterialItem(navController, "토스 시험일정", "toeic_exam_schedule") }
+                item { StudyMaterialItem(navController, "오픽 시험일정", "https://m.opic.or.kr/opics/servlet/controller.opic.site.receipt.AnnualScheduleServlet?p_process=select-list-mobile&p_tab=opic") }
+                item { StudyMaterialItem(navController, "토스 시험일정", "https://www.toeicswt.co.kr/receipt/examSchList.php") }
                 item { StudyMaterialItem(navController, "오늘의 영어표현", "today_english_expression") }
             }
         }
@@ -636,7 +692,7 @@ fun StudyMaterialItem(navController: NavHostController, title: String, route: St
     Column(
         modifier = Modifier
             .width(100.dp)
-            .clickable { navController.navigate(route) },
+            .clickable { navController.navigate(route) },  // 클릭 시 경로로 이동
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
@@ -645,22 +701,6 @@ fun StudyMaterialItem(navController: NavHostController, title: String, route: St
             modifier = Modifier.size(64.dp)
         )
         Text(text = title, fontSize = 16.sp, color = Color.Black)
-    }
-}
-
-@Composable
-fun SubfolderScreen(title: String) {
-    Scaffold { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
-        ) {
-            Text(title, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            // Add content specific to each subfolder here
-            BasicText("This is the content for $title")
-        }
     }
 }
 
@@ -675,7 +715,7 @@ fun CourseDetailScreen(title: String) {
         ) {
             Text(title, fontSize = 24.sp, fontWeight = FontWeight.Bold)
             // Add detailed content for the course here
-            BasicText("Detailed content for $title")
+            BasicText("$title 자세히")
         }
     }
 }
@@ -689,9 +729,9 @@ fun PersonalInfoScreen() {
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            Text("Personal Information", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Text("회원 정보", fontSize = 24.sp, fontWeight = FontWeight.Bold)
             // Add personal information content here
-            BasicText("This is the personal information screen.")
+            BasicText("회원 정보 페이지입니다.")
         }
     }
 }
@@ -705,9 +745,9 @@ fun SettingsScreen() {
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            Text("Settings", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Text("설정", fontSize = 24.sp, fontWeight = FontWeight.Bold)
             // Add settings content here
-            BasicText("This is the settings screen.")
+            BasicText("앱 설정 페이지입니다.")
         }
     }
 }

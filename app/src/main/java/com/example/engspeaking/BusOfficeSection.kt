@@ -46,10 +46,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.engspeaking.components.BusFirstLecCard
-import com.example.engspeaking.components.BusLectureCard
+import com.example.engspeaking.components.FirstLecCard
+import com.example.engspeaking.components.LectureCard
 import com.example.engspeaking.components.BusTopicCard
-import com.example.engspeaking.components.TosLectureCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -181,7 +180,7 @@ fun BusOfficeSection(navController: NavHostController) {
             }
 
             // 강의 제목 리스트
-            val BuslectureTitles = listOf(
+            val lectureTitles = listOf(
                 "Introduction to Business English",
                 "Advanced Presentation Skills",
                 "Meeting Etiquette",
@@ -201,37 +200,37 @@ fun BusOfficeSection(navController: NavHostController) {
                     Text("최신 강의 소개", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 item {
-                    BusFirstLecCard(
-                        title = BuslectureTitles[0],
+                    FirstLecCard(
+                        title = lectureTitles[0],
                         subtitle = "Updated today",
                         navController = navController,
-                        BuslectureId = "0",
+                        lectureId = "0",
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-                items(BuslectureTitles) { title ->
-                    val index = BuslectureTitles.indexOf(title)
+                items(lectureTitles) { title ->
+                    val index = lectureTitles.indexOf(title)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        BusLectureCard(
+                        LectureCard(
                             title = title,
                             subtitle = "Updated today",
                             modifier = Modifier.weight(1f),
                             navController = navController,
-                            BuslectureId = index.toString()
+                            lectureId = index.toString()
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        if (index + 1 < BuslectureTitles.size) {
-                            BusLectureCard(
-                                title = BuslectureTitles[index + 1],
+                        if (index + 1 < lectureTitles.size) {
+                            LectureCard(
+                                title = lectureTitles[index + 1],
                                 subtitle = "Updated today",
                                 modifier = Modifier.weight(1f),
                                 navController = navController,
-                                BuslectureId = (index + 1).toString()
+                                lectureId = (index + 1).toString()
                             )
                         }
                     }

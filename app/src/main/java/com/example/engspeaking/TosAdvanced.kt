@@ -47,8 +47,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.engspeaking.components.TosTopicCard
-import com.example.engspeaking.components.TosFirstLecCard
-import com.example.engspeaking.components.TosLectureCard
+import com.example.engspeaking.components.FirstLecCard
+import com.example.engspeaking.components.LectureCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -157,7 +157,7 @@ fun TosAdvancedSection(navController: NavHostController) {
             }
 
             // 강의 제목 리스트
-            val ToslectureTitles = listOf(
+            val lectureTitles = listOf(
                 "Introduction to Business English",
                 "Advanced Presentation Skills",
                 "Meeting Etiquette",
@@ -177,37 +177,37 @@ fun TosAdvancedSection(navController: NavHostController) {
                     Text("최신 강의 소개", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 item {
-                    TosFirstLecCard(
-                        title = ToslectureTitles[0],
+                    FirstLecCard(
+                        title = lectureTitles[0],
                         subtitle = "Updated today",
                         navController = navController,
-                        ToslectureId = "0",
+                        lectureId = "0",
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-                items(ToslectureTitles) { title ->
-                    val index = ToslectureTitles.indexOf(title)
+                items(lectureTitles) { title ->
+                    val index = lectureTitles.indexOf(title)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        TosLectureCard(
+                        LectureCard(
                             title = title,
                             subtitle = "Updated today",
                             modifier = Modifier.weight(1f),
                             navController = navController,
-                            ToslectureId = index.toString()
+                            lectureId = index.toString()
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        if (index + 1 < ToslectureTitles.size) {
-                            TosLectureCard(
-                                title = ToslectureTitles[index + 1],
+                        if (index + 1 < lectureTitles.size) {
+                            LectureCard(
+                                title = lectureTitles[index + 1],
                                 subtitle = "Updated today",
                                 modifier = Modifier.weight(1f),
                                 navController = navController,
-                                ToslectureId = (index + 1).toString()
+                                lectureId = (index + 1).toString()
                             )
                         }
                     }

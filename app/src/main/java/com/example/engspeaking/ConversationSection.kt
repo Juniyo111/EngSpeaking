@@ -47,8 +47,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.engspeaking.components.ConLevelCard
-import com.example.engspeaking.components.ConLectureCard
-import com.example.engspeaking.components.ConFirstLecCard
+import com.example.engspeaking.components.LectureCard
+import com.example.engspeaking.components.FirstLecCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -170,7 +170,7 @@ fun ConversationSection(navController: NavHostController) {
             }
 
             // 강의 제목 리스트
-            val ConlectureTitles = listOf(
+            val lectureTitles = listOf(
                 "Introduction to Business English",
                 "Advanced Presentation Skills",
                 "Meeting Etiquette",
@@ -190,37 +190,37 @@ fun ConversationSection(navController: NavHostController) {
                     Text("최신 강의 소개", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 item {
-                    ConFirstLecCard(
-                        title = ConlectureTitles[0], // 강의 제목 사용
+                    FirstLecCard(
+                        title = lectureTitles[0], // 강의 제목 사용
                         subtitle = "Updated today",
                         navController = navController,
-                        ConlectureId = "0", // 강의 ID 사용
+                        lectureId = "0", // 강의 ID 사용
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-                items(ConlectureTitles) { title ->
-                    val index = ConlectureTitles.indexOf(title)
+                items(lectureTitles) { title ->
+                    val index = lectureTitles.indexOf(title)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        ConLectureCard(
+                        LectureCard(
                             title = title,
                             subtitle = "Updated today",
                             modifier = Modifier.weight(1f),
                             navController = navController,
-                            ConlectureId = index.toString()
+                            lectureId = index.toString()
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        if (index + 1 < ConlectureTitles.size) {
-                            ConLectureCard(
-                                title = ConlectureTitles[index + 1],
+                        if (index + 1 < lectureTitles.size) {
+                            LectureCard(
+                                title = lectureTitles[index + 1],
                                 subtitle = "Updated today",
                                 modifier = Modifier.weight(1f),
                                 navController = navController,
-                                ConlectureId = (index + 1).toString()
+                                lectureId = (index + 1).toString()
                             )
                         }
                     }
