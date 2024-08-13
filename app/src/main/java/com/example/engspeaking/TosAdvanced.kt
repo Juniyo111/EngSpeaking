@@ -46,14 +46,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.engspeaking.components.TosProficiencyLevelCard
+import com.example.engspeaking.components.TosTopicCard
+import com.example.engspeaking.components.TosFirstLecCard
 import com.example.engspeaking.components.TosLectureCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TosAdvancedSection(navController: NavHostController) {
     var selectedTabIndex by remember { mutableStateOf(1) }
-    var selectedProficiencyLevel by remember { mutableStateOf("ADVANCED")}
+    var selectedTosLevel by remember { mutableStateOf("ADVANCED")}
 
     Scaffold(
         topBar = {
@@ -97,7 +98,7 @@ fun TosAdvancedSection(navController: NavHostController) {
             // Scrollable Tab Row
             ScrollableTabRow(
                 selectedTabIndex = selectedTabIndex,
-                edgePadding = 8.dp,
+                edgePadding = 4.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 listOf(
@@ -107,48 +108,66 @@ fun TosAdvancedSection(navController: NavHostController) {
                     "비즈니스영어" to "business_route",
                     "기타" to "etc_route"
                 ).forEachIndexed { index, (title, route) ->
+                    val isSelected = selectedTabIndex == index
                     Tab(
-                        selected = selectedTabIndex == index,
+                        selected = isSelected,
                         onClick = {
                             selectedTabIndex = index
                             navController.navigate(route)
                         },
                         text = {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                if (selectedTabIndex == index) {
-                                    Icon(
-                                        imageVector = Icons.Default.Check,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
+                            Box(
+                                modifier = Modifier
+                                    .padding(horizontal = 0.5.dp, vertical = 4.dp) // 텍스트 주변의 패딩 조정
+                                    .background(
+                                        color = if (isSelected) Color.Blue else Color.Transparent,
+                                        shape = RoundedCornerShape(12.dp) // 배경 모양을 둥글게 설정
                                     )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                }
-                                Text(title, maxLines = 1, fontSize = 14.sp)
+                                    .padding(horizontal =3.dp, vertical = 6.dp) // 배경 내부의 패딩 조정
+                            ) {
+                                Text(
+                                    text = title,
+                                    color = if (isSelected) Color.White else Color.Black,
+                                    maxLines = 1,
+                                    fontSize = 14.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
                             }
                         }
                     )
                 }
             }
 
-            // Proficiency Levels
+            // Tos Levels
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                TosProficiencyLevelCard("NOVICE", navController, "tos_novice", selectedProficiencyLevel == "NOVICE") {
-                    selectedProficiencyLevel = "NOVICE"
+                TosTopicCard("NOVICE", navController, "tos_novice", selectedTosLevel == "NOVICE") {
+                    selectedTosLevel = "NOVICE"
                 }
-                TosProficiencyLevelCard("INTERMEDIATE", navController, "tos_intermediate", selectedProficiencyLevel == "INTERMEDIATE") {
-                    selectedProficiencyLevel = "INTERMEDIATE"
+                TosTopicCard("INTERMEDIATE", navController, "tos_intermediate", selectedTosLevel == "INTERMEDIATE") {
+                    selectedTosLevel = "INTERMEDIATE"
                 }
-                TosProficiencyLevelCard("ADVANCED", navController, "tos_advanced", selectedProficiencyLevel == "ADVANCED") {
-                    selectedProficiencyLevel = "ADVANCED"
+                TosTopicCard("ADVANCED", navController, "tos_advanced", selectedTosLevel == "ADVANCED") {
+                    selectedTosLevel = "ADVANCED"
                 }
             }
 
-            // Latest Lectures
+            // 강의 제목 리스트
+            val ToslectureTitles = listOf(
+                "Introduction to Business English",
+                "Advanced Presentation Skills",
+                "Meeting Etiquette",
+                "Office Communication",
+                "Negotiation Tactics",
+                "Cultural Sensitivity in Business",
+                "Email Writing Skills",
+                "Customer Service Excellence"
+            )
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -158,19 +177,38 @@ fun TosAdvancedSection(navController: NavHostController) {
                     Text("최신 강의 소개", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 item {
-                    LectureCard("Lecture 0", "Updated today", Modifier.fillMaxWidth()) // 첫 번째 항목
+                    TosFirstLecCard(
+                        title = ToslectureTitles[0],
+                        subtitle = "Updated today",
+                        navController = navController,
+                        ToslectureId = "0",
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
-                items((1..9 step 2).toList()) { index -> // 나머지 항목들을 두 개씩 한 줄에 표시
+                items(ToslectureTitles) { title ->
+                    val index = ToslectureTitles.indexOf(title)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        TosLectureCard("Lecture $index", "Updated today", Modifier.weight(1f), navController = navController, route = "opic_int_lecture1")
+                        TosLectureCard(
+                            title = title,
+                            subtitle = "Updated today",
+                            modifier = Modifier.weight(1f),
+                            navController = navController,
+                            ToslectureId = index.toString()
+                        )
                         Spacer(modifier = Modifier.width(8.dp))
-                        if (index + 1 <= 9) {
-                            TosLectureCard("Lecture ${index + 1}", "Updated today", Modifier.weight(1f), navController = navController, route = "opic_int_lecture1")
+                        if (index + 1 < ToslectureTitles.size) {
+                            TosLectureCard(
+                                title = ToslectureTitles[index + 1],
+                                subtitle = "Updated today",
+                                modifier = Modifier.weight(1f),
+                                navController = navController,
+                                ToslectureId = (index + 1).toString()
+                            )
                         }
                     }
                 }

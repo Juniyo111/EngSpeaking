@@ -55,6 +55,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.engspeaking.LectureDetailScreen
 import com.example.engspeaking.ui.theme.EngSpeakingTheme
 
 class Mainboard : ComponentActivity() {
@@ -94,6 +95,39 @@ class Mainboard : ComponentActivity() {
                     composable("con_basic") { ConBasicSection(navController = navController)}
                     composable("con_intermediate") { ConIntermediateSection(navController = navController)}
                     composable("con_advanced") { ConAdvancedSection(navController = navController)}
+                    composable("conversation") { EngSpeakingCourseSection(navController = navController) }
+                    composable("opic") { OPICSectionMain(navController = navController) }
+                    composable("toeic") { TOEICSection(navController = navController) }
+                    composable("business") { BusinessEnglishSection(navController = navController) }
+                    composable("latest_lecture") { LatestLectureSection(navController = navController) }
+                    composable("speaking_material") { SpeakingStudyMaterialSection(navController = navController) }
+                    // Conlecture 경로
+                    composable("Conlecture/{ConlectureId}/{ConlectureTitle}") { backStackEntry ->
+                        val ConlectureId = backStackEntry.arguments?.getString("ConlectureId")
+                        val ConlectureTitle = backStackEntry.arguments?.getString("ConlectureTitle")
+                        LectureDetailScreen(navController = navController, lectureId = ConlectureId, lectureTitle = ConlectureTitle)
+                    }
+
+                    // Buslecture 경로
+                    composable("Buslecture/{BuslectureId}/{BuslectureTitle}") { backStackEntry ->
+                        val BuslectureId = backStackEntry.arguments?.getString("BuslectureId")
+                        val BuslectureTitle = backStackEntry.arguments?.getString("BuslectureTitle")
+                        LectureDetailScreen(navController = navController, lectureId = BuslectureId, lectureTitle = BuslectureTitle)
+                    }
+
+                    // Opiclecture 경로
+                    composable("Opiclecture/{OpiclectureId}/{OpiclectureTitle}") { backStackEntry ->
+                        val OpiclectureId = backStackEntry.arguments?.getString("OpiclectureId")
+                        val OpiclectureTitle = backStackEntry.arguments?.getString("OpiclectureTitle")
+                        LectureDetailScreen(navController = navController, lectureId = OpiclectureId, lectureTitle = OpiclectureTitle)
+                    }
+
+                    // Toslecture 경로
+                    composable("Toslecture/{ToslectureId}/{ToslectureTitle}") { backStackEntry ->
+                        val ToslectureId = backStackEntry.arguments?.getString("ToslectureId")
+                        val ToslectureTitle = backStackEntry.arguments?.getString("ToslectureTitle")
+                        LectureDetailScreen(navController = navController, lectureId = ToslectureId, lectureTitle = ToslectureTitle)
+                    }
                 }
             }
         }
@@ -168,7 +202,7 @@ fun MainScreen(navController: NavHostController) {
                     Spacer(modifier = Modifier.height(16.dp))
                     EngSpeakingCourseSection(navController)
                     Spacer(modifier = Modifier.height(16.dp))
-                    OPICSection(navController)
+                    OPICSectionMain(navController)
                     Spacer(modifier = Modifier.height(16.dp))
                     TOEICSection(navController)
                     Spacer(modifier = Modifier.height(16.dp))
@@ -244,7 +278,7 @@ fun CourseItem(navController: NavHostController, title: String, route: String, i
 }
 
 @Composable
-fun OPICSection(navController: NavHostController) {
+fun OPICSectionMain(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

@@ -1,7 +1,6 @@
 package com.example.engspeaking
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,20 +8,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,7 +32,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -46,12 +40,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.engspeaking.components.OpicFirstLecCard
+import com.example.engspeaking.components.OpicLectureCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OpicSection(navController: NavHostController) {
     var selectedTabIndex by remember { mutableStateOf(0) }
-    var selectedProficiencyLevel by remember { mutableStateOf("INTERMEDIATE") }
 
     Scaffold(
         topBar = {
@@ -94,7 +89,7 @@ fun OpicSection(navController: NavHostController) {
             // Scrollable Tab Row
             ScrollableTabRow(
                 selectedTabIndex = selectedTabIndex,
-                edgePadding = 8.dp,
+                edgePadding = 4.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 listOf(
@@ -104,48 +99,81 @@ fun OpicSection(navController: NavHostController) {
                     "비즈니스영어" to "business_route",
                     "기타" to "etc_route"
                 ).forEachIndexed { index, (title, route) ->
+                    val isSelected = selectedTabIndex == index
                     Tab(
-                        selected = selectedTabIndex == index,
+                        selected = isSelected,
                         onClick = {
                             selectedTabIndex = index
                             navController.navigate(route)
                         },
                         text = {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                if (selectedTabIndex == index) {
-                                    Icon(
-                                        imageVector = Icons.Default.Check,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
+                            Box(
+                                modifier = Modifier
+                                    .padding(horizontal = 0.5.dp, vertical = 4.dp) // 텍스트 주변의 패딩 조정
+                                    .background(
+                                        color = if (isSelected) Color.Blue else Color.Transparent,
+                                        shape = RoundedCornerShape(12.dp) // 배경 모양을 둥글게 설정
                                     )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                }
-                                Text(title, maxLines = 1, fontSize = 14.sp)
+                                    .padding(horizontal =3.dp, vertical = 6.dp) // 배경 내부의 패딩 조정
+                            ) {
+                                Text(
+                                    text = title,
+                                    color = if (isSelected) Color.White else Color.Black,
+                                    maxLines = 1,
+                                    fontSize = 14.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
                             }
                         }
                     )
                 }
             }
 
-            // Proficiency Levels
+            // Opic Levels
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ProficiencyLevelCard("NOVICE", navController, "opic_novice", selectedProficiencyLevel == "NOVICE") {
-                    selectedProficiencyLevel = "NOVICE"
+                com.example.engspeaking.components.OpicLevelCard(
+                    "NOVICE",
+                    navController,
+                    "opic_novice",
+                    selected = false, // 선택 상태 관리가 필요 없으므로 고정값으로 설정
+                ) {
+                    navController.navigate("opic_novice")
                 }
-                ProficiencyLevelCard("INTERMEDIATE", navController, "opic_intermediate", selectedProficiencyLevel == "INTERMEDIATE") {
-                    selectedProficiencyLevel = "INTERMEDIATE"
+                com.example.engspeaking.components.OpicLevelCard(
+                    "INTERMEDIATE",
+                    navController,
+                    "opic_intermediate",
+                    selected = false, // 선택 상태 관리가 필요 없으므로 고정값으로 설정
+                ) {
+                    navController.navigate("opic_intermediate")
                 }
-                ProficiencyLevelCard("ADVANCED", navController, "opic_advanced", selectedProficiencyLevel == "ADVANCED") {
-                    selectedProficiencyLevel = "ADVANCED"
+                com.example.engspeaking.components.OpicLevelCard(
+                    "ADVANCED",
+                    navController,
+                    "opic_advanced",
+                    selected = false, // 선택 상태 관리가 필요 없으므로 고정값으로 설정
+                ) {
+                    navController.navigate("opic_advanced")
                 }
             }
 
-            // Latest Lectures
+            // 강의 제목 리스트
+            val OpiclectureTitles = listOf(
+                "Introduction to Business English",
+                "Advanced Presentation Skills",
+                "Meeting Etiquette",
+                "Office Communication",
+                "Negotiation Tactics",
+                "Cultural Sensitivity in Business",
+                "Email Writing Skills",
+                "Customer Service Excellence"
+            )
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -155,61 +183,42 @@ fun OpicSection(navController: NavHostController) {
                     Text("최신 강의 소개", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 item {
-                    LectureCard("Lecture 0", "Updated today", Modifier.fillMaxWidth()) // 첫 번째 항목
+                    OpicFirstLecCard(
+                        title = OpiclectureTitles[0],
+                        subtitle = "Updated today",
+                        navController = navController,
+                        OpiclectureId = "0",
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
-                items((1..9 step 2).toList()) { index -> // 나머지 항목들을 두 개씩 한 줄에 표시
+                items(OpiclectureTitles) { title ->
+                    val index = OpiclectureTitles.indexOf(title)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        LectureCard("Lecture $index", "Updated today", Modifier.weight(1f))
+                        OpicLectureCard(
+                            title = title,
+                            subtitle = "Updated today",
+                            modifier = Modifier.weight(1f),
+                            navController = navController,
+                            OpiclectureId = index.toString()
+                        )
                         Spacer(modifier = Modifier.width(8.dp))
-                        if (index + 1 <= 9) {
-                            LectureCard("Lecture ${index + 1}", "Updated today", Modifier.weight(1f))
+                        if (index + 1 < OpiclectureTitles.size) {
+                            OpicLectureCard(
+                                title = OpiclectureTitles[index + 1],
+                                subtitle = "Updated today",
+                                modifier = Modifier.weight(1f),
+                                navController = navController,
+                                OpiclectureId = (index + 1).toString()
+                            )
                         }
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun ProficiencyLevelCard(level: String, navController: NavHostController, route: String, selected: Boolean = false, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .clickable {
-                onClick()
-                navController.navigate(route)
-            }
-            .padding(8.dp)
-            .background(Color(0xFFE0E0E0), shape = RoundedCornerShape(8.dp))
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(level, fontSize = 12.sp, fontWeight = FontWeight.Bold) // Adjust font size to 12.sp
-            if (selected) {
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(imageVector = Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp))
-            }
-        }
-    }
-}
-
-@Composable
-fun LectureCard(title: String, subtitle: String, modifier: Modifier = Modifier) {
-    Card(
-        shape = RoundedCornerShape(8.dp),
-        modifier = modifier
-            .padding(8.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(subtitle, fontSize = 14.sp, color = Color.Gray)
         }
     }
 }

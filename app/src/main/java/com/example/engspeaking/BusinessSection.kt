@@ -46,8 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.engspeaking.components.BusTopicCard
-import com.example.engspeaking.components.TosLectureCard
+import com.example.engspeaking.components.BusLectureCard
+import com.example.engspeaking.components.BusFirstLecCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,7 +95,7 @@ fun BusinessSection(navController: NavHostController) {
             // Scrollable Tab Row
             ScrollableTabRow(
                 selectedTabIndex = selectedTabIndex,
-                edgePadding = 8.dp,
+                edgePadding = 4.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 listOf(
@@ -105,23 +105,30 @@ fun BusinessSection(navController: NavHostController) {
                     "비즈니스영어" to "business_route",
                     "기타" to "etc_route"
                 ).forEachIndexed { index, (title, route) ->
+                    val isSelected = selectedTabIndex == index
                     Tab(
-                        selected = selectedTabIndex == index,
+                        selected = isSelected,
                         onClick = {
                             selectedTabIndex = index
                             navController.navigate(route)
                         },
                         text = {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                if (selectedTabIndex == index) {
-                                    Icon(
-                                        imageVector = Icons.Default.Check,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
+                            Box(
+                                modifier = Modifier
+                                    .padding(horizontal = 0.5.dp, vertical = 4.dp) // 텍스트 주변의 패딩 조정
+                                    .background(
+                                        color = if (isSelected) Color.Blue else Color.Transparent,
+                                        shape = RoundedCornerShape(12.dp) // 배경 모양을 둥글게 설정
                                     )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                }
-                                Text(title, maxLines = 1, fontSize = 14.sp)
+                                    .padding(horizontal =3.dp, vertical = 6.dp) // 배경 내부의 패딩 조정
+                            ) {
+                                Text(
+                                    text = title,
+                                    color = if (isSelected) Color.White else Color.Black,
+                                    maxLines = 1,
+                                    fontSize = 14.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
                             }
                         }
                     )
@@ -178,7 +185,18 @@ fun BusinessSection(navController: NavHostController) {
             }
 
 
-            // Latest Lectures
+            // 강의 제목 리스트
+            val BuslectureTitles = listOf(
+                "Introduction to Business English",
+                "Advanced Presentation Skills",
+                "Meeting Etiquette",
+                "Office Communication",
+                "Negotiation Tactics",
+                "Cultural Sensitivity in Business",
+                "Email Writing Skills",
+                "Customer Service Excellence"
+            )
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -188,19 +206,38 @@ fun BusinessSection(navController: NavHostController) {
                     Text("최신 강의 소개", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 item {
-                    BusinessLectureCard("Lecture 0", "Updated today", Modifier.fillMaxWidth()) // 첫 번째 항목
+                    BusFirstLecCard(
+                        title = BuslectureTitles[0],
+                        subtitle = "Updated today",
+                        navController = navController,
+                        BuslectureId = "0",
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
-                items((1..9 step 2).toList()) { index -> // 나머지 항목들을 두 개씩 한 줄에 표시
+                items(BuslectureTitles) { title ->
+                    val index = BuslectureTitles.indexOf(title)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        BusinessLectureCard("Lecture $index", "Updated today", Modifier.weight(1f))
+                        BusLectureCard(
+                            title = title,
+                            subtitle = "Updated today",
+                            modifier = Modifier.weight(1f),
+                            navController = navController,
+                            BuslectureId = index.toString()
+                        )
                         Spacer(modifier = Modifier.width(8.dp))
-                        if (index + 1 <= 9) {
-                            BusinessLectureCard("Lecture ${index + 1}", "Updated today", Modifier.weight(1f))
+                        if (index + 1 < BuslectureTitles.size) {
+                            BusLectureCard(
+                                title = BuslectureTitles[index + 1],
+                                subtitle = "Updated today",
+                                modifier = Modifier.weight(1f),
+                                navController = navController,
+                                BuslectureId = (index + 1).toString()
+                            )
                         }
                     }
                 }
@@ -220,21 +257,6 @@ fun BusinessProficiencyLevelCard(level: String, navController: NavHostController
         contentAlignment = Alignment.Center
     ) {
         Text(level, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-    }
-}
-
-@Composable
-fun BusinessLectureCard(title: String, subtitle: String, modifier: Modifier = Modifier) {
-    Card(
-        shape = RoundedCornerShape(8.dp),
-        modifier = modifier
-            .padding(8.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(subtitle, fontSize = 14.sp, color = Color.Gray)
-        }
     }
 }
 
