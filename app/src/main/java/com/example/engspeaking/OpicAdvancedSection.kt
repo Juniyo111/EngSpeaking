@@ -46,14 +46,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.engspeaking.components.OiProficiencyLevelCard
-import com.example.engspeaking.components.OiLectureCard
+import com.example.engspeaking.components.OpicLectureCard
+import com.example.engspeaking.components.OpicLevelCard
+import com.example.engspeaking.components.OpicFirstLecCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OpicAdvancedSection(navController: NavHostController) {
     var selectedTabIndex by remember { mutableStateOf(0) }
-    var selectedProficiencyLevel by remember { mutableStateOf("ADVANCED")}
+    var selectedOpicLevel by remember { mutableStateOf("ADVANCED")}
 
     Scaffold(
         topBar = {
@@ -97,7 +98,7 @@ fun OpicAdvancedSection(navController: NavHostController) {
             // Scrollable Tab Row
             ScrollableTabRow(
                 selectedTabIndex = selectedTabIndex,
-                edgePadding = 8.dp,
+                edgePadding = 4.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 listOf(
@@ -107,48 +108,66 @@ fun OpicAdvancedSection(navController: NavHostController) {
                     "비즈니스영어" to "business_route",
                     "기타" to "etc_route"
                 ).forEachIndexed { index, (title, route) ->
+                    val isSelected = selectedTabIndex == index
                     Tab(
-                        selected = selectedTabIndex == index,
+                        selected = isSelected,
                         onClick = {
                             selectedTabIndex = index
                             navController.navigate(route)
                         },
                         text = {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                if (selectedTabIndex == index) {
-                                    Icon(
-                                        imageVector = Icons.Default.Check,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
+                            Box(
+                                modifier = Modifier
+                                    .padding(horizontal = 0.5.dp, vertical = 4.dp) // 텍스트 주변의 패딩 조정
+                                    .background(
+                                        color = if (isSelected) Color.Blue else Color.Transparent,
+                                        shape = RoundedCornerShape(12.dp) // 배경 모양을 둥글게 설정
                                     )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                }
-                                Text(title, maxLines = 1, fontSize = 14.sp)
+                                    .padding(horizontal =3.dp, vertical = 6.dp) // 배경 내부의 패딩 조정
+                            ) {
+                                Text(
+                                    text = title,
+                                    color = if (isSelected) Color.White else Color.Black,
+                                    maxLines = 1,
+                                    fontSize = 14.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
                             }
                         }
                     )
                 }
             }
 
-            // Proficiency Levels
+            // Opic Levels
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                OiProficiencyLevelCard("NOVICE", navController, "opic_novice", selectedProficiencyLevel == "NOVICE") {
-                    selectedProficiencyLevel = "NOVICE"
+                OpicLevelCard("NOVICE", navController, "opic_novice", selectedOpicLevel == "NOVICE") {
+                    selectedOpicLevel = "NOVICE"
                 }
-                OiProficiencyLevelCard("INTERMEDIATE", navController, "opic_intermediate", selectedProficiencyLevel == "INTERMEDIATE") {
-                    selectedProficiencyLevel = "INTERMEDIATE"
+                OpicLevelCard("INTERMEDIATE", navController, "opic_intermediate", selectedOpicLevel == "INTERMEDIATE") {
+                    selectedOpicLevel = "INTERMEDIATE"
                 }
-                OiProficiencyLevelCard("ADVANCED", navController, "opic_advanced", selectedProficiencyLevel == "ADVANCED") {
-                    selectedProficiencyLevel = "ADVANCED"
+                OpicLevelCard("ADVANCED", navController, "opic_advanced", selectedOpicLevel == "ADVANCED") {
+                    selectedOpicLevel = "ADVANCED"
                 }
             }
 
-            // Latest Lectures
+            // 강의 제목 리스트
+            val OpiclectureTitles = listOf(
+                "Introduction to Business English",
+                "Advanced Presentation Skills",
+                "Meeting Etiquette",
+                "Office Communication",
+                "Negotiation Tactics",
+                "Cultural Sensitivity in Business",
+                "Email Writing Skills",
+                "Customer Service Excellence"
+            )
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -158,19 +177,38 @@ fun OpicAdvancedSection(navController: NavHostController) {
                     Text("최신 강의 소개", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 item {
-                    LectureCard("Lecture 0", "Updated today", Modifier.fillMaxWidth()) // 첫 번째 항목
+                    OpicFirstLecCard(
+                        title = OpiclectureTitles[0],
+                        subtitle = "Updated today",
+                        navController = navController,
+                        OpiclectureId = "0",
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
-                items((1..9 step 2).toList()) { index -> // 나머지 항목들을 두 개씩 한 줄에 표시
+                items(OpiclectureTitles) { title ->
+                    val index = OpiclectureTitles.indexOf(title)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        OiLectureCard("Lecture $index", "Updated today", Modifier.weight(1f), navController = navController, route = "opic_int_lecture1")
+                        OpicLectureCard(
+                            title = title,
+                            subtitle = "Updated today",
+                            modifier = Modifier.weight(1f),
+                            navController = navController,
+                            OpiclectureId = index.toString()
+                        )
                         Spacer(modifier = Modifier.width(8.dp))
-                        if (index + 1 <= 9) {
-                            OiLectureCard("Lecture ${index + 1}", "Updated today", Modifier.weight(1f), navController = navController, route = "opic_int_lecture1")
+                        if (index + 1 < OpiclectureTitles.size) {
+                            OpicLectureCard(
+                                title = OpiclectureTitles[index + 1],
+                                subtitle = "Updated today",
+                                modifier = Modifier.weight(1f),
+                                navController = navController,
+                                OpiclectureId = (index + 1).toString()
+                            )
                         }
                     }
                 }

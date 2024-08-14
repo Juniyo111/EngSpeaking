@@ -27,7 +27,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 @Composable
-fun OiProficiencyLevelCard(level: String, navController: NavHostController, route: String, selected: Boolean = false, onClick: () -> Unit) {
+fun ConLevelCard(
+    level: String,
+    navController: NavHostController,
+    route: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    val backgroundColor = if (selected) Color(0xFF000080) else Color(0xFFE0E0E0) // 선택된 경우 배경 색상을 변경
+    val textColor = if (selected) Color.White else Color.Black // 선택된 경우 텍스트 색상을 변경
+
     Box(
         modifier = Modifier
             .clickable {
@@ -35,28 +44,33 @@ fun OiProficiencyLevelCard(level: String, navController: NavHostController, rout
                 navController.navigate(route)
             }
             .padding(8.dp)
-            .background(Color(0xFFE0E0E0), shape = RoundedCornerShape(8.dp))
+            .background(backgroundColor, shape = RoundedCornerShape(8.dp))
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(level, fontSize = 12.sp, fontWeight = FontWeight.Bold) // Adjust font size to 12.sp
-            if (selected) {
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(imageVector = Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp))
-            }
-        }
+        Text(level, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textColor)
     }
 }
 
 @Composable
-fun OiLectureCard(title: String, subtitle: String, modifier: Modifier = Modifier, navController: NavHostController, // Add NavHostController
-                  route: String) {
+fun ConFirstLecCard(
+    title: String,
+    subtitle: String,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    ConlectureId: String // 강의 ID를 받음
+) {
+    // 강의 제목에서 공백을 "_"로 바꿔서 경로에 사용
+    val formattedTitle = title.replace(" ", "_")
+
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
             .padding(8.dp)
-            .clickable { navController.navigate(route) }
+            .clickable {
+                // 강의 ID와 제목을 함께 경로에 전달
+                navController.navigate("Conlecture/$ConlectureId/$formattedTitle")
+            }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
@@ -67,36 +81,24 @@ fun OiLectureCard(title: String, subtitle: String, modifier: Modifier = Modifier
 }
 
 @Composable
-fun TosProficiencyLevelCard(level: String, navController: NavHostController, route: String, selected: Boolean = false, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .clickable {
-                onClick()
-                navController.navigate(route)
-            }
-            .padding(8.dp)
-            .background(Color(0xFFE0E0E0), shape = RoundedCornerShape(8.dp))
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(level, fontSize = 12.sp, fontWeight = FontWeight.Bold) // Adjust font size to 12.sp
-            if (selected) {
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(imageVector = Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp))
-            }
-        }
-    }
-}
+fun ConLectureCard(
+    title: String,
+    subtitle: String,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    ConlectureId: String
+) {
+    // 강의 제목에서 공백을 "_"로 바꿔서 경로에 사용
+    val formattedTitle = title.replace(" ", "_")
 
-@Composable
-fun TosLectureCard(title: String, subtitle: String, modifier: Modifier = Modifier, navController: NavHostController, // Add NavHostController
-                  route: String) {
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
             .padding(8.dp)
-            .clickable { navController.navigate(route) }
+            .clickable {
+                // 강의 ID와 제목을 함께 경로에 전달
+                navController.navigate("Conlecture/$ConlectureId/$formattedTitle")
+            }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
@@ -129,15 +131,25 @@ fun BusTopicCard(
     }
 }
 
-
 @Composable
-fun BusLectureCard(title: String, subtitle: String, modifier: Modifier = Modifier, navController: NavHostController, // Add NavHostController
-                   route: String) {
+fun BusFirstLecCard(
+    title: String,
+    subtitle: String,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    BuslectureId: String // 강의 ID를 받음
+) {
+    // 강의 제목에서 공백을 "_"로 바꿔서 경로에 사용
+    val formattedTitle = title.replace(" ", "_")
+
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
             .padding(8.dp)
-            .clickable { navController.navigate(route) }
+            .clickable {
+                // 강의 ID와 제목을 함께 경로에 전달
+                navController.navigate("Buslecture/$BuslectureId/$formattedTitle")
+            }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
@@ -148,52 +160,77 @@ fun BusLectureCard(title: String, subtitle: String, modifier: Modifier = Modifie
 }
 
 @Composable
-fun ConversationLevelCard(level: String, navController: NavHostController, route: String, selected: Boolean,
-                          modifier: Modifier = Modifier, // Modifier 파라미터 추가
-                          onClick: () -> Unit) {
+fun BusLectureCard(
+    title: String,
+    subtitle: String,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    BuslectureId: String
+) {
+    // 강의 제목에서 공백을 "_"로 바꿔서 경로에 사용
+    val formattedTitle = title.replace(" ", "_")
+
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        modifier = modifier
+            .padding(8.dp)
+            .clickable {
+                // 강의 ID와 제목을 함께 경로에 전달
+                navController.navigate("Buslecture/$BuslectureId/$formattedTitle")
+            }
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(subtitle, fontSize = 14.sp, color = Color.Gray)
+        }
+    }
+}
+
+@Composable
+fun OpicLevelCard(
+    level: String,
+    navController: NavHostController,
+    route: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    val backgroundColor = if (selected) Color(0xFF000080) else Color(0xFFE0E0E0) // 선택된 경우 배경 색상을 변경
+    val textColor = if (selected) Color.White else Color.Black // 선택된 경우 텍스트 색상을 변경
+
     Box(
         modifier = Modifier
-            .clickable { navController.navigate(route) }
+            .clickable {
+                onClick()
+                navController.navigate(route)
+            }
             .padding(8.dp)
-            .background(Color(0xFFE0E0E0), shape = RoundedCornerShape(8.dp))
+            .background(backgroundColor, shape = RoundedCornerShape(8.dp))
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(level, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Text(level, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textColor)
     }
 }
 
 @Composable
-fun ConLectureCard(title: String, subtitle: String, modifier: Modifier = Modifier, navController: NavHostController, // Add NavHostController
-                   route: String) {
-    Card(
-        shape = RoundedCornerShape(8.dp),
-        modifier = modifier
-            .padding(8.dp)
-            .clickable { navController.navigate(route) }
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(subtitle, fontSize = 14.sp, color = Color.Gray)
-        }
-    }
-}
-
-@Composable
-fun ConFisrtLecCard(
+fun OpicFirstLecCard(
     title: String,
     subtitle: String,
     modifier: Modifier = Modifier,
-    navController: NavHostController  // NavController를 받음
+    navController: NavHostController,
+    OpiclectureId: String // 강의 ID를 받음
 ) {
+    // 강의 제목에서 공백을 "_"로 바꿔서 경로에 사용
+    val formattedTitle = title.replace(" ", "_")
+
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
             .padding(8.dp)
             .clickable {
-                // 여기에 NavController를 사용한 네비게이션 로직 추가 가능
-                // 예: navController.navigate("some_route")
+                // 강의 ID와 제목을 함께 경로에 전달
+                navController.navigate("Opiclecture/$OpiclectureId/$formattedTitle")
             }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -205,22 +242,23 @@ fun ConFisrtLecCard(
 }
 
 @Composable
-fun ConversationLectureCard(
+fun OpicLectureCard(
     title: String,
     subtitle: String,
     modifier: Modifier = Modifier,
-    navController: NavHostController? = null, // Optional로 설정해서 필요한 경우에만 사용
-    route: String? = null // Optional로 설정해서 필요한 경우에만 사용
+    navController: NavHostController,
+    OpiclectureId: String
 ) {
+    // 강의 제목에서 공백을 "_"로 바꿔서 경로에 사용
+    val formattedTitle = title.replace(" ", "_")
+
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
             .padding(8.dp)
             .clickable {
-                // Optional로 설정한 navController와 route가 null이 아니면 네비게이션
-                if (navController != null && route != null) {
-                    navController.navigate(route)
-                }
+                // 강의 ID와 제목을 함께 경로에 전달
+                navController.navigate("Opiclecture/$OpiclectureId/$formattedTitle")
             }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -230,4 +268,94 @@ fun ConversationLectureCard(
         }
     }
 }
+
+@Composable
+fun TosTopicCard(
+    level: String,
+    navController: NavHostController,
+    route: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    val backgroundColor = if (selected) Color(0xFF000080) else Color(0xFFE0E0E0) // 선택된 경우 배경 색상을 변경
+    val textColor = if (selected) Color.White else Color.Black // 선택된 경우 텍스트 색상을 변경
+
+    Box(
+        modifier = Modifier
+            .clickable {
+                onClick()
+                navController.navigate(route)
+            }
+            .padding(8.dp)
+            .background(backgroundColor, shape = RoundedCornerShape(8.dp))
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(level, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textColor)
+    }
+}
+
+@Composable
+fun TosFirstLecCard(
+    title: String,
+    subtitle: String,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    ToslectureId: String // 강의 ID를 받음
+) {
+    // 강의 제목에서 공백을 "_"로 바꿔서 경로에 사용
+    val formattedTitle = title.replace(" ", "_")
+
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        modifier = modifier
+            .padding(8.dp)
+            .clickable {
+                // 강의 ID와 제목을 함께 경로에 전달
+                navController.navigate("Toslecture/$ToslectureId/$formattedTitle")
+            }
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(subtitle, fontSize = 14.sp, color = Color.Gray)
+        }
+    }
+}
+
+@Composable
+fun TosLectureCard(
+    title: String,
+    subtitle: String,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    ToslectureId: String
+) {
+    // 강의 제목에서 공백을 "_"로 바꿔서 경로에 사용
+    val formattedTitle = title.replace(" ", "_")
+
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        modifier = modifier
+            .padding(8.dp)
+            .clickable {
+                // 강의 ID와 제목을 함께 경로에 전달
+                navController.navigate("Toslecture/$ToslectureId/$formattedTitle")
+            }
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(title, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(subtitle, fontSize = 14.sp, color = Color.Gray)
+        }
+    }
+}
+
+
+
+
+
+
+
+
 
