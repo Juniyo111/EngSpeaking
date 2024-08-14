@@ -46,11 +46,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.engspeaking.components.OpicLevelCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OpicIntLecture1(navController: NavHostController) {
     var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedOpicLevel by remember { mutableStateOf("INTERMEDIATE") }
 
     Scaffold(
         topBar = {
@@ -93,7 +95,7 @@ fun OpicIntLecture1(navController: NavHostController) {
             // Scrollable Tab Row
             ScrollableTabRow(
                 selectedTabIndex = selectedTabIndex,
-                edgePadding = 8.dp,
+                edgePadding = 4.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 listOf(
@@ -103,54 +105,52 @@ fun OpicIntLecture1(navController: NavHostController) {
                     "비즈니스영어" to "business_route",
                     "기타" to "etc_route"
                 ).forEachIndexed { index, (title, route) ->
+                    val isSelected = selectedTabIndex == index
                     Tab(
-                        selected = selectedTabIndex == index,
+                        selected = isSelected,
                         onClick = {
                             selectedTabIndex = index
                             navController.navigate(route)
                         },
                         text = {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                if (selectedTabIndex == index) {
-                                    Icon(
-                                        imageVector = Icons.Default.Check,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(16.dp)
+                            Box(
+                                modifier = Modifier
+                                    .padding(horizontal = 0.5.dp, vertical = 4.dp) // 텍스트 주변의 패딩 조정
+                                    .background(
+                                        color = if (isSelected) Color.Blue else Color.Transparent,
+                                        shape = RoundedCornerShape(12.dp) // 배경 모양을 둥글게 설정
                                     )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                }
-                                Text(title, maxLines = 1, fontSize = 14.sp)
+                                    .padding(horizontal =3.dp, vertical = 6.dp) // 배경 내부의 패딩 조정
+                            ) {
+                                Text(
+                                    text = title,
+                                    color = if (isSelected) Color.White else Color.Black,
+                                    maxLines = 1,
+                                    fontSize = 14.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
                             }
                         }
                     )
                 }
             }
 
-            // Proficiency Levels
+            // Opic Levels
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ProficiencyLevelCard(
-                    "NOVICE",
-                    navController,
-                    "novice_route",
-                    Modifier.weight(1f)
-                )
-                ProficiencyLevelCard(
-                    "INTERMEDIATE",
-                    navController,
-                    "intermediate_route",
-                    Modifier.weight(1f)
-                )
-                ProficiencyLevelCard(
-                    "ADVANCED",
-                    navController,
-                    "advanced_route",
-                    Modifier.weight(1f)
-                )
+                OpicLevelCard("NOVICE", navController, "opic_novice", selectedOpicLevel == "NOVICE") {
+                    selectedOpicLevel = "NOVICE"
+                }
+                OpicLevelCard("INTERMEDIATE", navController, "opic_intermediate", selectedOpicLevel == "INTERMEDIATE") {
+                    selectedOpicLevel = "INTERMEDIATE"
+                }
+                OpicLevelCard("ADVANCED", navController, "opic_advanced", selectedOpicLevel == "ADVANCED") {
+                    selectedOpicLevel = "ADVANCED"
+                }
             }
 
             // Video Placeholder
@@ -211,28 +211,6 @@ fun OpicIntLecture1(navController: NavHostController) {
                         OiLectureCardPreview("Title $index", "Updated today")
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-fun ProficiencyLevelCard(level: String, navController: NavHostController, route: String, modifier: Modifier = Modifier) {
-    Box(
-        modifier = Modifier
-            .clickable { navController.navigate(route) }
-            .background(Color(0xFFE0E0E0), shape = RoundedCornerShape(8.dp))
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(level, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-            if (level == "INTERMEDIATE") {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp).padding(start = 4.dp)
-                )
             }
         }
     }
