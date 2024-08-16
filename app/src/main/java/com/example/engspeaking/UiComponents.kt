@@ -1,5 +1,7 @@
 package com.example.engspeaking.components
 
+import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,10 +23,39 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+
+@Composable
+fun CourseItem(
+    navController: NavHostController,
+    title: String,
+    route: String,
+    imageRes: Int,
+    modifier: Modifier = Modifier,
+    textColor: Color = Color.Yellow,
+    fontSize: Int = 16,
+    imageSize: Int = 72
+) {
+    Column(
+        modifier = modifier
+            .width(150.dp)
+            .clickable { navController.navigate(route) },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Image 컴포저블로 변경
+        Image(
+            painter = painterResource(id = imageRes),
+            contentDescription = null,
+            modifier = Modifier.size(imageSize.dp)  // 이미지 크기 설정
+        )
+        Text(text = title, fontSize = fontSize.sp, color = textColor)
+    }
+}
+
 
 @Composable
 fun ConLevelCard(
@@ -32,23 +63,20 @@ fun ConLevelCard(
     navController: NavHostController,
     route: String,
     selected: Boolean,
+    modifier: Modifier = Modifier, // Modifier 파라미터 추가
     onClick: () -> Unit
 ) {
-    val backgroundColor = if (selected) Color(0xFF000080) else Color(0xFFE0E0E0) // 선택된 경우 배경 색상을 변경
-    val textColor = if (selected) Color.White else Color.Black // 선택된 경우 텍스트 색상을 변경
-
     Box(
-        modifier = Modifier
-            .clickable {
-                onClick()
-                navController.navigate(route)
-            }
-            .padding(8.dp)
-            .background(backgroundColor, shape = RoundedCornerShape(8.dp))
-            .padding(16.dp),
+        modifier = modifier
+            .clickable { onClick() }
+            .background(
+                color = if (selected) Color(0xFF6FA3EF) else Color(0xFFE0E0E0),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(8.dp), // padding을 Box 내부로 이동
         contentAlignment = Alignment.Center
     ) {
-        Text(level, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textColor)
+        Text(level, fontSize = 14.sp, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -81,23 +109,20 @@ fun OpicLevelCard(
     navController: NavHostController,
     route: String,
     selected: Boolean,
+    modifier: Modifier = Modifier, // Modifier 파라미터 추가
     onClick: () -> Unit
 ) {
-    val backgroundColor = if (selected) Color(0xFF000080) else Color(0xFFE0E0E0) // 선택된 경우 배경 색상을 변경
-    val textColor = if (selected) Color.White else Color.Black // 선택된 경우 텍스트 색상을 변경
-
     Box(
-        modifier = Modifier
-            .clickable {
-                onClick()
-                navController.navigate(route)
-            }
-            .padding(8.dp)
-            .background(backgroundColor, shape = RoundedCornerShape(8.dp))
-            .padding(16.dp),
+        modifier = modifier
+            .clickable { onClick() }
+            .background(
+                color = if (selected) Color(0xFF6FA3EF) else Color(0xFFE0E0E0),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(8.dp), // padding을 Box 내부로 이동
         contentAlignment = Alignment.Center
     ) {
-        Text(level, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textColor)
+        Text(level, fontSize = 14.sp, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -107,23 +132,20 @@ fun TosTopicCard(
     navController: NavHostController,
     route: String,
     selected: Boolean,
+    modifier: Modifier = Modifier, // Modifier 파라미터 추가
     onClick: () -> Unit
 ) {
-    val backgroundColor = if (selected) Color(0xFF000080) else Color(0xFFE0E0E0) // 선택된 경우 배경 색상을 변경
-    val textColor = if (selected) Color.White else Color.Black // 선택된 경우 텍스트 색상을 변경
-
     Box(
-        modifier = Modifier
-            .clickable {
-                onClick()
-                navController.navigate(route)
-            }
-            .padding(8.dp)
-            .background(backgroundColor, shape = RoundedCornerShape(8.dp))
-            .padding(16.dp),
+        modifier = modifier
+            .clickable { onClick() }
+            .background(
+                color = if (selected) Color(0xFF6FA3EF) else Color(0xFFE0E0E0),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(8.dp), // padding을 Box 내부로 이동
         contentAlignment = Alignment.Center
     ) {
-        Text(level, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textColor)
+        Text(level, fontSize = 14.sp, fontWeight = FontWeight.Bold)
     }
 }
 

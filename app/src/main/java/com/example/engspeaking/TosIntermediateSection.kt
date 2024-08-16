@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -46,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.engspeaking.components.CourseItem
 import com.example.engspeaking.components.TosTopicCard
 import com.example.engspeaking.components.FirstLecCard
 import com.example.engspeaking.components.LectureCard
@@ -54,7 +57,7 @@ import com.example.engspeaking.components.LectureCard
 @Composable
 fun TosIntermediateSection(navController: NavHostController) {
     var selectedTabIndex by remember { mutableStateOf(1) }
-    var selectedTosLevel by remember { mutableStateOf("INTERMEDIATE")}
+    var selectedTopicIndex by remember { mutableStateOf(1) }
 
     Scaffold(
         topBar = {
@@ -95,64 +98,73 @@ fun TosIntermediateSection(navController: NavHostController) {
                 .background(Color(0xFFFFFDD0)) // Background color
                 .padding(paddingValues)
         ) {
-            // Scrollable Tab Row
-            ScrollableTabRow(
-                selectedTabIndex = selectedTabIndex,
-                edgePadding = 4.dp,
-                modifier = Modifier.fillMaxWidth()
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                listOf(
-                    "오픽" to "opic_route",
-                    "토스" to "toeic_route",
-                    "일반회화" to "conversation_route",
-                    "비즈니스영어" to "business_route",
-                    "기타" to "etc_route"
-                ).forEachIndexed { index, (title, route) ->
+                itemsIndexed(listOf(
+                    "오픽" to "opic",
+                    "토스" to "toeic",
+                    "일반회화" to "conversation",
+                    "비즈니스영어" to "business"
+                )) { index, (title, route) ->
+                    // 선택 상태를 확인하여 색상을 변경
                     val isSelected = selectedTabIndex == index
-                    Tab(
-                        selected = isSelected,
-                        onClick = {
-                            selectedTabIndex = index
-                            navController.navigate(route)
-                        },
-                        text = {
-                            Box(
-                                modifier = Modifier
-                                    .padding(horizontal = 0.5.dp, vertical = 4.dp) // 텍스트 주변의 패딩 조정
-                                    .background(
-                                        color = if (isSelected) Color.Blue else Color.Transparent,
-                                        shape = RoundedCornerShape(12.dp) // 배경 모양을 둥글게 설정
-                                    )
-                                    .padding(horizontal =3.dp, vertical = 6.dp) // 배경 내부의 패딩 조정
-                            ) {
-                                Text(
-                                    text = title,
-                                    color = if (isSelected) Color.White else Color.Black,
-                                    maxLines = 1,
-                                    fontSize = 14.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                )
-                            }
-                        }
+
+                    CourseItem(
+                        navController = navController,
+                        title = title,
+                        route = route,
+                        imageRes = R.drawable.ic_launcher_foreground,
+                        modifier = Modifier
+                            .background(
+                                color = if (isSelected) Color.Blue else Color.LightGray,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .clickable {
+                                selectedTabIndex = index  // 탭을 클릭하면 인덱스를 갱신
+                                navController.navigate(route)
+                            },
+                        textColor = if (isSelected) Color.White else Color.Black,
+                        fontSize = 14,
+                        imageSize = 48
                     )
                 }
             }
 
+            Spacer(modifier = Modifier.height(5.dp))
+
             // Tos Levels
-            Row(
+            LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.spacedBy(8.dp)  // 간격을 균등하게 설정
             ) {
-                TosTopicCard("NOVICE", navController, "tos_novice", selectedTosLevel == "NOVICE") {
-                    selectedTosLevel = "NOVICE"
-                }
-                TosTopicCard("INTERMEDIATE", navController, "tos_intermediate", selectedTosLevel == "INTERMEDIATE") {
-                    selectedTosLevel = "INTERMEDIATE"
-                }
-                TosTopicCard("ADVANCED", navController, "tos_advanced", selectedTosLevel == "ADVANCED") {
-                    selectedTosLevel = "ADVANCED"
+                itemsIndexed(listOf(
+                    "Novice" to "tos_novice",
+                    "Intermediate" to "tos_intermediate",
+                    "Advanced" to "tos_advanced"
+                )) { index, (title, route) ->
+                    // 선택된 항목 확인
+                    val isSelected = selectedTopicIndex == index
+
+                    com.example.engspeaking.components.TosTopicCard(
+                        level = title,
+                        navController = navController,
+                        route = route,
+                        selected = isSelected,  // 선택된 항목의 상태 전달
+                        modifier = Modifier.width(120.dp)
+                    ) {
+                        // 클릭 시 선택 상태 업데이트 및 해당 경로로 이동
+                        selectedTopicIndex = index
+                        navController.navigate(route)
+                    }
                 }
             }
 

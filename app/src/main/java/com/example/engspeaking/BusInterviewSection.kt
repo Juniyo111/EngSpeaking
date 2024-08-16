@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -49,12 +51,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.engspeaking.components.FirstLecCard
 import com.example.engspeaking.components.LectureCard
 import com.example.engspeaking.components.BusTopicCard
+import com.example.engspeaking.components.CourseItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BusInterviewSection(navController: NavHostController) {
     var selectedTabIndex by remember { mutableStateOf(3) }
-    var selectedBusTopic by remember { mutableStateOf("인터뷰")}
+
+    var selectedTopicIndex by remember { mutableStateOf(0) }
 
     Scaffold(
         topBar = {
@@ -95,87 +99,76 @@ fun BusInterviewSection(navController: NavHostController) {
                 .background(Color(0xFFFFFDD0)) // Background color
                 .padding(paddingValues)
         ) {
-            // Scrollable Tab Row
-            ScrollableTabRow(
-                selectedTabIndex = selectedTabIndex,
-                edgePadding = 4.dp,
-                modifier = Modifier.fillMaxWidth()
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                listOf(
-                    "오픽" to "opic_route",
-                    "토스" to "toeic_route",
-                    "일반회화" to "conversation_route",
-                    "비즈니스영어" to "business_route",
-                    "기타" to "etc_route"
-                ).forEachIndexed { index, (title, route) ->
+                // 각 항목을 반복하면서 생성
+                itemsIndexed(listOf(
+                    "오픽" to "opic",
+                    "토스" to "toeic",
+                    "일반회화" to "conversation",
+                    "비즈니스영어" to "business"
+                )) { index, (title, route) ->
+                    // 현재 항목이 선택된 상태인지를 확인
                     val isSelected = selectedTabIndex == index
-                    Tab(
-                        selected = isSelected,
-                        onClick = {
-                            selectedTabIndex = index
-                            navController.navigate(route)
-                        },
-                        text = {
-                            Box(
-                                modifier = Modifier
-                                    .padding(horizontal = 0.5.dp, vertical = 4.dp) // 텍스트 주변의 패딩 조정
-                                    .background(
-                                        color = if (isSelected) Color.Blue else Color.Transparent,
-                                        shape = RoundedCornerShape(12.dp) // 배경 모양을 둥글게 설정
-                                    )
-                                    .padding(horizontal =3.dp, vertical = 6.dp) // 배경 내부의 패딩 조정
-                            ) {
-                                Text(
-                                    text = title,
-                                    color = if (isSelected) Color.White else Color.Black,
-                                    maxLines = 1,
-                                    fontSize = 14.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                )
-                            }
-                        }
+
+                    // CourseItem 함수 호출, 선택된 상태에 맞춰 배경 및 텍스트 색상을 변경
+                    CourseItem(
+                        navController = navController,
+                        title = title,
+                        route = route,
+                        imageRes = R.drawable.ic_launcher_foreground,
+                        modifier = Modifier
+                            .background(
+                                color = if (isSelected) Color.Blue else Color.LightGray, // 선택된 상태에 따라 색상 변경
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .clickable {
+                                selectedTabIndex = index  // 클릭 시 선택된 탭 인덱스 갱신
+                                navController.navigate(route) // 해당 페이지로 이동
+                            },
+                        textColor = if (isSelected) Color.White else Color.Black, // 선택된 상태에 따라 텍스트 색상 변경
+                        fontSize = 14,
+                        imageSize = 48
                     )
                 }
             }
 
-            // Topic
-            Row(
+            Spacer(modifier = Modifier.height(5.dp))
+
+            // Topic Levels
+            LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.spacedBy(8.dp)  // 간격을 균등하게 설정
             ) {
-                com.example.engspeaking.components.BusTopicCard(
-                    "인터뷰",
-                    navController,
-                    "bus_interview",
-                    selectedBusTopic == "인터뷰"
-                ) {
-                    selectedBusTopic = "인터뷰"
-                }
-                com.example.engspeaking.components.BusTopicCard(
-                    "발표",
-                    navController,
-                    "bus_presentation",
-                    selectedBusTopic == "발표"
-                ) {
-                    selectedBusTopic = "발표"
-                }
-                com.example.engspeaking.components.BusTopicCard(
-                    "회의",
-                    navController,
-                    "bus_meeting",
-                    selectedBusTopic == "회의"
-                ) {
-                    selectedBusTopic = "회의"
-                }
-                com.example.engspeaking.components.BusTopicCard(
-                    "일반 사무",
-                    navController,
-                    "bus_office",
-                    selectedBusTopic == "일반 사무"
-                ) {
-                    selectedBusTopic = "일반 사무"
+                itemsIndexed(listOf(
+                    "인터뷰" to "bus_interview",
+                    "발표" to "bus_presentation",
+                    "회의" to "bus_meeting",
+                    "일반 사무" to "bus_office"
+                )) { index, (title, route) ->
+                    // 선택된 항목 확인
+                    val isSelected = selectedTopicIndex == index
+
+                    com.example.engspeaking.components.BusTopicCard(
+                        level = title,
+                        navController = navController,
+                        route = route,
+                        selected = isSelected,  // 선택된 항목의 상태 전달
+                        modifier = Modifier.width(80.dp)
+                    ) {
+                        // 클릭 시 선택 상태 업데이트 및 해당 경로로 이동
+                        selectedTopicIndex = index
+                        navController.navigate(route)
+                    }
                 }
             }
 

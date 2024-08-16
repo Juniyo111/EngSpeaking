@@ -2,41 +2,15 @@ package com.example.engspeaking
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Card
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScrollableTabRow
-import androidx.compose.material3.Tab
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,12 +23,33 @@ import androidx.navigation.compose.rememberNavController
 import com.example.engspeaking.components.FirstLecCard
 import com.example.engspeaking.components.LectureCard
 import com.example.engspeaking.components.BusTopicCard
+import com.example.engspeaking.components.CourseItem
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BusOfficeSection(navController: NavHostController) {
     var selectedTabIndex by remember { mutableStateOf(3) }
-    var selectedBusTopic by remember { mutableStateOf("일반 사무")}
+    var selectedTopicIndex by remember { mutableStateOf(3) }
+
+    // LazyListState 선언
+    val tabListState = rememberLazyListState()
+    val topicListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    // 탭 선택 시 자동 스크롤 처리
+    LaunchedEffect(selectedTabIndex) {
+        coroutineScope.launch {
+            tabListState.animateScrollToItem(selectedTabIndex)
+        }
+    }
+
+    // 토픽 선택 시 자동 스크롤 처리
+    LaunchedEffect(selectedTopicIndex) {
+        coroutineScope.launch {
+            topicListState.animateScrollToItem(selectedTopicIndex)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -65,7 +60,6 @@ fun BusOfficeSection(navController: NavHostController) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
-
                 actions = {
                     IconButton(onClick = { /* TODO: Handle more options */ }) {
                         Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More")
@@ -95,87 +89,73 @@ fun BusOfficeSection(navController: NavHostController) {
                 .background(Color(0xFFFFFDD0)) // Background color
                 .padding(paddingValues)
         ) {
-            // Scrollable Tab Row
-            ScrollableTabRow(
-                selectedTabIndex = selectedTabIndex,
-                edgePadding = 4.dp,
-                modifier = Modifier.fillMaxWidth()
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 탭 목록을 위한 LazyRow
+            LazyRow(
+                state = tabListState, // 상태 추가
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                listOf(
-                    "오픽" to "opic_route",
-                    "토스" to "toeic_route",
-                    "일반회화" to "conversation_route",
-                    "비즈니스영어" to "business_route",
-                    "기타" to "etc_route"
-                ).forEachIndexed { index, (title, route) ->
+                itemsIndexed(listOf(
+                    "오픽" to "opic",
+                    "토스" to "toeic",
+                    "일반회화" to "conversation",
+                    "비즈니스영어" to "business"
+                )) { index, (title, route) ->
                     val isSelected = selectedTabIndex == index
-                    Tab(
-                        selected = isSelected,
-                        onClick = {
-                            selectedTabIndex = index
-                            navController.navigate(route)
-                        },
-                        text = {
-                            Box(
-                                modifier = Modifier
-                                    .padding(horizontal = 0.5.dp, vertical = 4.dp) // 텍스트 주변의 패딩 조정
-                                    .background(
-                                        color = if (isSelected) Color.Blue else Color.Transparent,
-                                        shape = RoundedCornerShape(12.dp) // 배경 모양을 둥글게 설정
-                                    )
-                                    .padding(horizontal =3.dp, vertical = 6.dp) // 배경 내부의 패딩 조정
-                            ) {
-                                Text(
-                                    text = title,
-                                    color = if (isSelected) Color.White else Color.Black,
-                                    maxLines = 1,
-                                    fontSize = 14.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                )
-                            }
-                        }
+
+                    CourseItem(
+                        navController = navController,
+                        title = title,
+                        route = route,
+                        imageRes = R.drawable.ic_launcher_foreground,
+                        modifier = Modifier
+                            .background(
+                                color = if (isSelected) Color.Blue else Color.LightGray,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .clickable {
+                                selectedTabIndex = index
+                                navController.navigate(route)
+                            },
+                        textColor = if (isSelected) Color.White else Color.Black,
+                        fontSize = 14,
+                        imageSize = 48
                     )
                 }
             }
 
-            // Proficiency Levels
-            Row(
+            Spacer(modifier = Modifier.height(5.dp))
+
+            // 토픽 목록을 위한 LazyRow
+            LazyRow(
+                state = topicListState, // 상태 추가
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                com.example.engspeaking.components.BusTopicCard(
-                    "인터뷰",
-                    navController,
-                    "bus_interview",
-                    selectedBusTopic == "인터뷰"
-                ) {
-                    selectedBusTopic = "인터뷰"
-                }
-                com.example.engspeaking.components.BusTopicCard(
-                    "발표",
-                    navController,
-                    "bus_presentation",
-                    selectedBusTopic == "발표"
-                ) {
-                    selectedBusTopic = "발표"
-                }
-                com.example.engspeaking.components.BusTopicCard(
-                    "회의",
-                    navController,
-                    "bus_meeting",
-                    selectedBusTopic == "회의"
-                ) {
-                    selectedBusTopic = "회의"
-                }
-                com.example.engspeaking.components.BusTopicCard(
-                    "일반 사무",
-                    navController,
-                    "bus_office",
-                    selectedBusTopic == "일반 사무"
-                ) {
-                    selectedBusTopic = "일반 사무"
+                itemsIndexed(listOf(
+                    "인터뷰" to "bus_interview",
+                    "발표" to "bus_presentation",
+                    "회의" to "bus_meeting",
+                    "일반 사무" to "bus_office"
+                )) { index, (title, route) ->
+                    val isSelected = selectedTopicIndex == index
+
+                    BusTopicCard(
+                        level = title,
+                        navController = navController,
+                        route = route,
+                        selected = isSelected,
+                        modifier = Modifier.width(80.dp)
+                    ) {
+                        selectedTopicIndex = index
+                        navController.navigate(route)
+                    }
                 }
             }
 
@@ -242,20 +222,7 @@ fun BusOfficeSection(navController: NavHostController) {
 
 @Preview(showBackground = true)
 @Composable
-fun BusOfficegSectionPreview() {
+fun BusOfficeSectionPreview() {
     val navController = rememberNavController()
     BusOfficeSection(navController = navController)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

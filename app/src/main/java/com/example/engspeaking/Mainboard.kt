@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -55,8 +56,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.engspeaking.LectureDetailSection
 import com.example.engspeaking.ui.theme.EngSpeakingTheme
+import com.example.engspeaking.components.CourseItem
 
 
 
@@ -87,8 +88,8 @@ class Mainboard : ComponentActivity() {
                     composable("opic_novice") { OpicNoviceSection(navController = navController) }
                     composable("opic_advanced") { OpicAdvancedSection(navController = navController)}
                     composable("tos_novice") { TosNoviceSection(navController = navController)}
-                    composable("tos_intermediate") { TosNoviceSection(navController = navController)}
-                    composable("tos_advanced") { TosNoviceSection(navController = navController)}
+                    composable("tos_intermediate") { TosIntermediateSection(navController = navController)}
+                    composable("tos_advanced") { TosAdvancedSection(navController = navController)}
                     composable("bus_interview") { BusInterviewSection(navController = navController)}
                     composable("bus_presentation") { BusPresentationSection(navController = navController)}
                     composable("bus_meeting") { BusMeetingSection(navController = navController)}
@@ -96,10 +97,6 @@ class Mainboard : ComponentActivity() {
                     composable("con_basic") { ConBasicSection(navController = navController)}
                     composable("con_intermediate") { ConIntermediateSection(navController = navController)}
                     composable("con_advanced") { ConAdvancedSection(navController = navController)}
-                    composable("conversation") { ConversationSection(navController = navController) }
-                    composable("opic") { OPICSectionMain(navController = navController) }
-                    composable("toeic") { TOEICSection(navController = navController) }
-                    composable("business") { BusinessEnglishSection(navController = navController) }
                     composable("latest_lecture") { LatestLectureSection(navController = navController) }
                     composable("speaking_material") { SpeakingStudyMaterialSection(navController = navController) }
                     composable("opic_exam_schedule") { OpicTestSchedule() }
@@ -127,7 +124,7 @@ fun MainScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("SPEAKING CONTENT 101") },
+                title = { },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigate("personal_info") }) {
                         Icon(imageVector = Icons.Default.Person, contentDescription = "Personal Info")
@@ -163,17 +160,17 @@ fun MainScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0x80FF9B49))
-                .padding(paddingValues)
+                .padding(8.dp)
         ) {
 
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(16.dp)
+                    .padding(8.dp)
             ) {
                 item {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -186,17 +183,17 @@ fun MainScreen(navController: NavHostController) {
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     EngSpeakingCourseSection(navController)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    OPICSectionMain(navController)
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OPICSection(navController)
+                    Spacer(modifier = Modifier.height(8.dp))
                     TOEICSection(navController)
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     BusinessEnglishSection(navController)
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     LatestLectureSection(navController)
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     SpeakingStudyMaterialSection(navController)
                 }
             }
@@ -237,75 +234,19 @@ fun EngSpeakingCourseSection(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            item { CourseItem(navController, "오픽", "opic", R.drawable.ic_launcher_foreground) }
-            item { CourseItem(navController, "토익 스피킹", "toeic", R.drawable.ic_launcher_foreground) }
-            item { CourseItem(navController, "영어회화", "conversation", R.drawable.ic_launcher_foreground) }
-            item { CourseItem(navController, "Business English", "business", R.drawable.ic_launcher_foreground) }
+            item { CourseItem(navController, "오픽", "opic", R.drawable.opic_logo) }
+            item { CourseItem(navController, "토익 스피킹", "toeic", R.drawable.tos_logo) }
+            item { CourseItem(navController, "영어회화", "conversation", R.drawable.con_logo) }
+            item { CourseItem(navController, "Business English", "business", R.drawable.bus_logo) }
         }
     }
 }
 
+// OPICSection 함수 정의
 @Composable
-fun CourseItem(navController: NavHostController, title: String, route: String, imageRes: Int) {
-    Column(
-        modifier = Modifier
-            .width(100.dp)
-            .clickable { navController.navigate(route) },
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            painter = painterResource(id = imageRes),
-            contentDescription = null,
-            modifier = Modifier.size(64.dp)
-        )
-        Text(text = title, fontSize = 16.sp, color = Color.Yellow)
-    }
-}
-
-// CourseCard 함수 정의
-@Composable
-fun CourseCard(
-    navController: NavHostController,
-    lectureId: String,
-    lectureTitle: String,
-    image: Painter,
-    title: String,
-    description: String
-) {
-    Column(
-        modifier = Modifier
-            .width(200.dp)
-            .background(Color.White, RoundedCornerShape(8.dp))
-            .clickable { navController.navigate("lecture/$lectureId/$lectureTitle") }
-            .padding(16.dp)
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                painter = image,
-                contentDescription = null,
-                modifier = Modifier.size(64.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(text = title, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.Black)
-                Text(text = description, fontSize = 14.sp, color = Color.Gray)
-            }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        IconButton(
-            onClick = { /* Play video */ },
-            modifier = Modifier.align(Alignment.End)
-        ) {
-            Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Play", tint = Color.Black)
-        }
-    }
-}
-
-// OPICSectionMain 함수 정의
-@Composable
-fun OPICSectionMain(navController: NavHostController) {
+fun OPICSection(navController: NavHostController) {
     val lectureTitles = listOf(
         "좋아하는 음악 또는 가수 묘사",
         "현재 살고 있는 집 묘사"
@@ -316,8 +257,8 @@ fun OPICSectionMain(navController: NavHostController) {
             .fillMaxWidth()
             .padding(8.dp)
             .background(Color.LightGray, RoundedCornerShape(8.dp))
-            .clickable { navController.navigate("opic") }
     ) {
+        // 상단 Row: 오픽 OPIC 섹션 제목과 아이콘
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -339,17 +280,40 @@ fun OPICSectionMain(navController: NavHostController) {
             )
         }
 
+        // 레벨 카드 리스트: Novice, Intermediate, Advanced
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item { LevelCard(level = "Novice", modifier = Modifier.clickable { navController.navigate("opic_novice") } ) }
-            item { LevelCard(level = "Intermediate", modifier = Modifier.clickable { navController.navigate("opic_intermediate") } ) }
-            item { LevelCard(level = "Advanced", modifier = Modifier.clickable { navController.navigate("opic_advanced") } ) }
+            item {
+                // Novice 레벨 카드에 이미지 추가
+                LevelCard(
+                    level = "Novice",
+                    imageRes = R.drawable.fluency_level, // 예시 이미지 리소스 ID
+                    modifier = Modifier.clickable { navController.navigate("opic_novice") }
+                )
+            }
+            item {
+                // Intermediate 레벨 카드에 이미지 추가
+                LevelCard(
+                    level = "Intermediate",
+                    imageRes = R.drawable.fluency_level, // 예시 이미지 리소스 ID
+                    modifier = Modifier.clickable { navController.navigate("opic_intermediate") }
+                )
+            }
+            item {
+                // Advanced 레벨 카드에 이미지 추가
+                LevelCard(
+                    level = "Advanced",
+                    imageRes = R.drawable.fluency_level, // 예시 이미지 리소스 ID
+                    modifier = Modifier.clickable { navController.navigate("opic_advanced") }
+                )
+            }
         }
 
+        // 강의 카드 리스트
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
@@ -362,32 +326,32 @@ fun OPICSectionMain(navController: NavHostController) {
                     navController = navController,
                     lectureId = "1",  // 강의 ID
                     lectureTitle = lectureTitles[0],  // 첫 번째 강의 제목
-                    image = painterResource(id = android.R.drawable.ic_menu_gallery),
+                    image = painterResource(id = R.drawable.instructor_1),  // 예시 이미지 리소스 ID
                     title = "강사 1",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
-                    description = "샘플 | 주제: 건강"
+                    description = "샘플 | 주제: 인터뷰"
                 )
             }
             // 두 번째 강의 카드
             item {
                 CourseCard(
                     navController = navController,
-                    lectureId = "1",  // 강의 ID
+                    lectureId = "2",  // 강의 ID
                     lectureTitle = lectureTitles[1],  // 두 번째 강의 제목
-                    image = painterResource(id = android.R.drawable.ic_menu_gallery),
-                    title = "강사 1",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
-                    description = "샘플 | 주제: 운동"
+                    image = painterResource(id = R.drawable.instructor_2),  // 예시 이미지 리소스 ID
+                    title = "강사 2",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
+                    description = "샘플 | 주제: 발표"
                 )
             }
         }
     }
 }
 
-// TOEIC Section 함수 정의
+
 @Composable
 fun TOEICSection(navController: NavHostController) {
     val lectureTitles = listOf(
-        "사진 묘사",
-        "듣고 질문에 답하기"
+        "좋아하는 음악 또는 가수 묘사",
+        "현재 살고 있는 집 묘사"
     )
 
     Column(
@@ -395,8 +359,8 @@ fun TOEICSection(navController: NavHostController) {
             .fillMaxWidth()
             .padding(8.dp)
             .background(Color.LightGray, RoundedCornerShape(8.dp))
-            .clickable { navController.navigate("opic") }
     ) {
+        // 상단 Row: 오픽 OPIC 섹션 제목과 아이콘
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -406,7 +370,7 @@ fun TOEICSection(navController: NavHostController) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "토익 TOEIC SPEAKING",
+                text = "토익 스피킹",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -418,17 +382,40 @@ fun TOEICSection(navController: NavHostController) {
             )
         }
 
+        // 레벨 카드 리스트: Novice, Intermediate, Advanced
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item { LevelCard(level = "Novice", modifier = Modifier.clickable { navController.navigate("opic_novice") } ) }
-            item { LevelCard(level = "Intermediate", modifier = Modifier.clickable { navController.navigate("opic_intermediate") } ) }
-            item { LevelCard(level = "Advanced", modifier = Modifier.clickable { navController.navigate("opic_advanced") } ) }
+            item {
+                // Novice 레벨 카드에 이미지 추가
+                LevelCard(
+                    level = "Novice",
+                    imageRes = R.drawable.fluency_level, // 예시 이미지 리소스 ID
+                    modifier = Modifier.clickable { navController.navigate("tos_novice") }
+                )
+            }
+            item {
+                // Intermediate 레벨 카드에 이미지 추가
+                LevelCard(
+                    level = "Intermediate",
+                    imageRes = R.drawable.fluency_level, // 예시 이미지 리소스 ID
+                    modifier = Modifier.clickable { navController.navigate("tos_intermediate") }
+                )
+            }
+            item {
+                // Advanced 레벨 카드에 이미지 추가
+                LevelCard(
+                    level = "Advanced",
+                    imageRes = R.drawable.fluency_level, // 예시 이미지 리소스 ID
+                    modifier = Modifier.clickable { navController.navigate("tos_advanced") }
+                )
+            }
         }
 
+        // 강의 카드 리스트
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
@@ -441,27 +428,28 @@ fun TOEICSection(navController: NavHostController) {
                     navController = navController,
                     lectureId = "1",  // 강의 ID
                     lectureTitle = lectureTitles[0],  // 첫 번째 강의 제목
-                    image = painterResource(id = android.R.drawable.ic_menu_gallery),
+                    image = painterResource(id = R.drawable.instructor_1),  // 예시 이미지 리소스 ID
                     title = "강사 1",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
-                    description = "샘플 | 주제: 여행 질문"
+                    description = "샘플 | 주제: 인터뷰"
                 )
             }
             // 두 번째 강의 카드
             item {
                 CourseCard(
                     navController = navController,
-                    lectureId = "1",  // 강의 ID
+                    lectureId = "2",  // 강의 ID
                     lectureTitle = lectureTitles[1],  // 두 번째 강의 제목
-                    image = painterResource(id = android.R.drawable.ic_menu_gallery),
-                    title = "강사 1",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
-                    description = "샘플 | 주제: 대중 교통 질문"
+                    image = painterResource(id = R.drawable.instructor_2),  // 예시 이미지 리소스 ID
+                    title = "강사 2",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
+                    description = "샘플 | 주제: 발표"
                 )
             }
         }
     }
 }
 
-// Business Section 함수 정의
+
+
 @Composable
 fun BusinessEnglishSection(navController: NavHostController) {
     val lectureTitles = listOf(
@@ -474,8 +462,8 @@ fun BusinessEnglishSection(navController: NavHostController) {
             .fillMaxWidth()
             .padding(8.dp)
             .background(Color.LightGray, RoundedCornerShape(8.dp))
-            .clickable { navController.navigate("opic") }
     ) {
+        // 상단 Row: BUSINESS ENGLISH 섹션 제목과 아이콘
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -497,17 +485,52 @@ fun BusinessEnglishSection(navController: NavHostController) {
             )
         }
 
+        // 레벨 카드 리스트: 인터뷰, 발표, 회의
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item { LevelCard(level = "인터뷰", modifier = Modifier.clickable { navController.navigate("bus_interview") } ) }
-            item { LevelCard(level = "발표", modifier = Modifier.clickable { navController.navigate("bus_presentation") } ) }
-            item { LevelCard(level = "회의", modifier = Modifier.clickable { navController.navigate("bus_meeting") } ) }
+            item {
+                // 인터뷰 레벨 카드에 이미지 추가
+                LevelCard(
+                    level = "인터뷰",
+                    imageRes = R.drawable.interview,
+                    imageSize = 100,
+                    modifier = Modifier.clickable { navController.navigate("bus_interview") }
+                )
+            }
+            item {
+                // 발표 레벨 카드에 이미지 추가
+                LevelCard(
+                    level = "발표",
+                    imageRes = R.drawable.presentation,
+                    imageSize = 100,
+                    modifier = Modifier.clickable { navController.navigate("bus_presentation") }
+                )
+            }
+            item {
+                // 회의 레벨 카드에 이미지 추가
+                LevelCard(
+                    level = "회의",
+                    imageRes = R.drawable.meeting,
+                    imageSize = 100,
+                    modifier = Modifier.clickable { navController.navigate("bus_meeting") }
+                )
+            }
+            item {
+                // 일반 사무 레벨 카드에 이미지 추가
+                LevelCard(
+                    level = "일반 사무",
+                    imageRes = R.drawable.office,
+                    imageSize = 100,
+                    modifier = Modifier.clickable { navController.navigate("bus_office") }
+                )
+            }
         }
 
+        // 강의 카드 리스트
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
@@ -520,7 +543,7 @@ fun BusinessEnglishSection(navController: NavHostController) {
                     navController = navController,
                     lectureId = "1",  // 강의 ID
                     lectureTitle = lectureTitles[0],  // 첫 번째 강의 제목
-                    image = painterResource(id = android.R.drawable.ic_menu_gallery),
+                    image = painterResource(id = R.drawable.instructor_1),  // 예시 이미지 리소스 ID
                     title = "강사 1",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
                     description = "샘플 | 주제: 인터뷰"
                 )
@@ -529,10 +552,10 @@ fun BusinessEnglishSection(navController: NavHostController) {
             item {
                 CourseCard(
                     navController = navController,
-                    lectureId = "1",  // 강의 ID
+                    lectureId = "2",  // 강의 ID
                     lectureTitle = lectureTitles[1],  // 두 번째 강의 제목
-                    image = painterResource(id = android.R.drawable.ic_menu_gallery),
-                    title = "강사 1",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
+                    image = painterResource(id = R.drawable.instructor_2),  // 예시 이미지 리소스 ID
+                    title = "강사 2",  // 실제 강사 이름이나 강의 이름을 사용할 수 있음
                     description = "샘플 | 주제: 발표"
                 )
             }
@@ -540,39 +563,48 @@ fun BusinessEnglishSection(navController: NavHostController) {
     }
 }
 
+// 수정된 LevelCard 함수
 @Composable
-fun LevelCard(level: String, modifier: Modifier = Modifier) {
+fun LevelCard(level: String, imageRes: Int, modifier: Modifier = Modifier, imageSize: Int = 64) {
     Column(
-        modifier = Modifier
-            .padding(8.dp)
+        modifier = modifier
             .background(Color.White, RoundedCornerShape(8.dp))
-            .padding(16.dp)
-            .clickable { /* Add navigation or action */ },
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(
-            painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+        // 이미지 리소스를 표시
+        Image(
+            painter = painterResource(id = imageRes),  // 이미지 리소스 추가
             contentDescription = null,
-            modifier = Modifier.size(48.dp)
+            modifier = Modifier.size(imageSize.dp)
         )
         Text(text = level, fontSize = 16.sp, color = Color.Black)
     }
 }
 
+// CourseCard 함수 정의
 @Composable
-fun CourseCard(navController: NavHostController, route: String, image: Painter, title: String, description: String) {
+fun CourseCard(
+    navController: NavHostController,
+    lectureId: String,
+    lectureTitle: String,
+    image: Painter,  // Image 컴포저블로 표시할 이미지를 받습니다.
+    title: String,
+    description: String
+) {
     Column(
         modifier = Modifier
             .width(200.dp)
             .background(Color.White, RoundedCornerShape(8.dp))
-            .clickable { navController.navigate(route) }
+            .clickable { navController.navigate("lecture/$lectureId/$lectureTitle") }
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
+            // Image 컴포저블로 변경
+            Image(
                 painter = image,
                 contentDescription = null,
-                modifier = Modifier.size(64.dp)
+                modifier = Modifier.size(64.dp)  // 이미지 크기 설정
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column {
@@ -589,6 +621,7 @@ fun CourseCard(navController: NavHostController, route: String, image: Painter, 
         }
     }
 }
+
 
 @Composable
 fun LatestLectureSection(navController: NavHostController) {
@@ -608,43 +641,71 @@ fun LatestLectureSection(navController: NavHostController) {
                 Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
             }
             Spacer(modifier = Modifier.height(8.dp))
-            LectureItem(navController, "Hobbies and Interests", "hobbies_and_interests")
+            LectureItem(navController, "Hobbies and Interests", "hobbies_and_interests", imageRes = R.drawable.hobbies_1, imageSize = 100)
             Spacer(modifier = Modifier.height(8.dp))
-            LectureItem(navController, "Presentation", "presentation")
+            LectureItem(navController, "Presentation", "presentation", imageRes = R.drawable.presenation_2, imageSize = 100)
         }
     }
 }
 
 @Composable
-fun LectureItem(navController: NavHostController, title: String, route: String) {
+fun LectureItem(
+    navController: NavHostController,
+    title: String,
+    route: String,
+    imageRes: Int, // 이미지 리소스 ID를 받는 매개변수
+    description: String = "상세:", // 상세 정보 텍스트를 기본값으로 설정
+    timeInfo: String = "오늘 • 23 min", // 시간 정보 텍스트를 기본값으로 설정
+    imageSize: Int = 72 // 이미지 크기를 동적으로 설정할 수 있도록 기본값 설정
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { navController.navigate(route) },
+            .clickable { navController.navigate(route) }, // 클릭 시 지정된 경로로 이동
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+            // 이미지 리소스를 표시하는 Image 컴포넌트
+            Image(
+                painter = painterResource(id = imageRes), // 이미지 리소스를 받아서 표시
                 contentDescription = null,
-                modifier = Modifier.size(48.dp)
+                modifier = Modifier.size(imageSize.dp) // 이미지 크기 설정
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column {
-                Text(title, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
-                Text("상세:", fontSize = 14.sp, color = Color.Gray)
+                Text(
+                    text = title,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = description,
+                    fontSize = 14.sp,
+                    color = Color.Gray
+                )
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("오늘 • 23 min", fontSize = 12.sp, color = Color.Gray)
+                    Text(
+                        text = timeInfo,
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
                 }
             }
         }
+        // 화살표 아이콘
         Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
     }
 }
+
+
 
 @Composable
 fun SpeakingStudyMaterialSection(navController: NavHostController) {
@@ -662,9 +723,9 @@ fun SpeakingStudyMaterialSection(navController: NavHostController) {
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+                        painter = painterResource(id = R.drawable.materials),
                         contentDescription = null,
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(70.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Column {
@@ -679,30 +740,57 @@ fun SpeakingStudyMaterialSection(navController: NavHostController) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                item { StudyMaterialItem(navController, "오픽 시험일정", "https://m.opic.or.kr/opics/servlet/controller.opic.site.receipt.AnnualScheduleServlet?p_process=select-list-mobile&p_tab=opic") }
-                item { StudyMaterialItem(navController, "토스 시험일정", "https://www.toeicswt.co.kr/receipt/examSchList.php") }
-                item { StudyMaterialItem(navController, "오늘의 영어표현", "today_english_expression") }
+                item {
+                    StudyMaterialItem(
+                        navController = navController,
+                        title = "오픽 시험일정",
+                        route = "https://m.opic.or.kr/opics/servlet/controller.opic.site.receipt.AnnualScheduleServlet?p_process=select-list-mobile&p_tab=opic",
+                        imageRes = R.drawable.opic_logo // 오픽 시험일정 이미지 리소스
+                    )
+                }
+                item {
+                    StudyMaterialItem(
+                        navController = navController,
+                        title = "토스 시험일정",
+                        route = "https://www.toeicswt.co.kr/receipt/examSchList.php",
+                        imageRes = R.drawable.tos_logo // 토익 시험일정 이미지 리소스
+                    )
+                }
+                item {
+                    StudyMaterialItem(
+                        navController = navController,
+                        title = "오늘의 영어표현",
+                        route = "today_english_expression",
+                        imageRes = R.drawable.today // 오늘의 영어표현 이미지 리소스
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun StudyMaterialItem(navController: NavHostController, title: String, route: String) {
+fun StudyMaterialItem(
+    navController: NavHostController,
+    title: String,
+    route: String,
+    imageRes: Int // 이미지 리소스 ID를 받는 매개변수 추가
+) {
     Column(
         modifier = Modifier
             .width(100.dp)
             .clickable { navController.navigate(route) },  // 클릭 시 경로로 이동
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(
-            painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+        Image(
+            painter = painterResource(id = imageRes), // 전달받은 이미지 리소스 사용
             contentDescription = null,
             modifier = Modifier.size(64.dp)
         )
         Text(text = title, fontSize = 16.sp, color = Color.Black)
     }
 }
+
 
 @Composable
 fun CourseDetailScreen(title: String) {

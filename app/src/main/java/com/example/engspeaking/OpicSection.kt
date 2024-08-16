@@ -1,6 +1,7 @@
 package com.example.engspeaking
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,10 +9,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -41,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.engspeaking.components.CourseItem
 import com.example.engspeaking.components.LectureCard
 import com.example.engspeaking.components.OpicLevelCard
 import com.example.engspeaking.components.FirstLecCard
@@ -48,12 +53,13 @@ import com.example.engspeaking.components.FirstLecCard
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OpicSection(navController: NavHostController) {
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTopicIndex by remember { mutableStateOf(-1) }
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("오픽 OPIC") },
+                title = { Text("오픽 OPIC", fontWeight = FontWeight.Bold, color = Color(0xFF000080)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
@@ -86,87 +92,81 @@ fun OpicSection(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFFFFFDD0)) // Background color
-                .padding(paddingValues)
+                .padding(paddingValues) // 패딩 반영
         ) {
-            // Scrollable Tab Row
-            ScrollableTabRow(
-                selectedTabIndex = selectedTabIndex,
-                edgePadding = 4.dp,
-                modifier = Modifier.fillMaxWidth()
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                listOf(
-                    "오픽" to "opic_route",
-                    "토스" to "toeic_route",
-                    "일반회화" to "conversation_route",
-                    "비즈니스영어" to "business_route",
-                    "기타" to "etc_route"
-                ).forEachIndexed { index, (title, route) ->
+                itemsIndexed(listOf(
+                    "오픽" to "opic",
+                    "토스" to "toeic",
+                    "일반회화" to "conversation",
+                    "비즈니스영어" to "business"
+                )) { index, (title, route) ->
+                    // 선택 상태를 확인하여 색상을 변경
                     val isSelected = selectedTabIndex == index
-                    Tab(
-                        selected = isSelected,
-                        onClick = {
-                            selectedTabIndex = index
-                            navController.navigate(route)
-                        },
-                        text = {
-                            Box(
-                                modifier = Modifier
-                                    .padding(horizontal = 0.5.dp, vertical = 4.dp) // 텍스트 주변의 패딩 조정
-                                    .background(
-                                        color = if (isSelected) Color.Blue else Color.Transparent,
-                                        shape = RoundedCornerShape(12.dp) // 배경 모양을 둥글게 설정
-                                    )
-                                    .padding(horizontal =3.dp, vertical = 6.dp) // 배경 내부의 패딩 조정
-                            ) {
-                                Text(
-                                    text = title,
-                                    color = if (isSelected) Color.White else Color.Black,
-                                    maxLines = 1,
-                                    fontSize = 14.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                )
-                            }
-                        }
+
+                    CourseItem(
+                        navController = navController,
+                        title = title,
+                        route = route,
+                        imageRes = R.drawable.ic_launcher_foreground,
+                        modifier = Modifier
+                            .background(
+                                color = if (isSelected) Color.Blue else Color.LightGray,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .clickable {
+                                selectedTabIndex = index  // 탭을 클릭하면 인덱스를 갱신
+                                navController.navigate(route)
+                            },
+                        textColor = if (isSelected) Color.White else Color.Black,
+                        fontSize = 14,
+                        imageSize = 48
                     )
                 }
             }
 
+            Spacer(modifier = Modifier.height(5.dp))
+
             // Opic Levels
-            Row(
+            LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.spacedBy(8.dp)  // 간격을 균등하게 설정
             ) {
-                com.example.engspeaking.components.OpicLevelCard(
-                    "NOVICE",
-                    navController,
-                    "opic_novice",
-                    selected = false, // 선택 상태 관리가 필요 없으므로 고정값으로 설정
-                ) {
-                    navController.navigate("opic_novice")
-                }
-                com.example.engspeaking.components.OpicLevelCard(
-                    "INTERMEDIATE",
-                    navController,
-                    "opic_intermediate",
-                    selected = false, // 선택 상태 관리가 필요 없으므로 고정값으로 설정
-                ) {
-                    navController.navigate("opic_intermediate")
-                }
-                com.example.engspeaking.components.OpicLevelCard(
-                    "ADVANCED",
-                    navController,
-                    "opic_advanced",
-                    selected = false, // 선택 상태 관리가 필요 없으므로 고정값으로 설정
-                ) {
-                    navController.navigate("opic_advanced")
+                itemsIndexed(listOf(
+                    "Novice" to "opic_novice",
+                    "Intermediate" to "opic_intermediate",
+                    "Advanced" to "opic_advanced"
+                )) { index, (title, route) ->
+                    // 선택된 항목 확인
+                    val isSelected = selectedTopicIndex == index
+
+                    com.example.engspeaking.components.OpicLevelCard(
+                        level = title,
+                        navController = navController,
+                        route = route,
+                        selected = isSelected,  // 선택된 항목의 상태 전달
+                        modifier = Modifier.width(120.dp)
+                    ) {
+                        // 클릭 시 선택 상태 업데이트 및 해당 경로로 이동
+                        selectedTopicIndex = index
+                        navController.navigate(route)
+                    }
                 }
             }
 
-            // 강의 제목 리스트
+            // 강의 목록
             val lectureTitles = listOf(
-                "Introduction to Business English",
+                "Introduction to Opic Test",
                 "Advanced Presentation Skills",
                 "Meeting Etiquette",
                 "Office Communication",
@@ -179,17 +179,17 @@ fun OpicSection(navController: NavHostController) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(8.dp)
+                    .padding(horizontal = 8.dp)
             ) {
                 item {
                     Text("최신 강의 소개", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 item {
                     FirstLecCard(
-                        title = lectureTitles[0],
+                        title = lectureTitles[0], // 강의 제목 사용
                         subtitle = "Updated today",
                         navController = navController,
-                        lectureId = "0",
+                        lectureId = "0", // 강의 ID 사용
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -224,6 +224,7 @@ fun OpicSection(navController: NavHostController) {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
