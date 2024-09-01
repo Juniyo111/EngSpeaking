@@ -59,6 +59,9 @@ fun OpicAdvancedSection(navController: NavHostController) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     var selectedTopicIndex by remember { mutableStateOf(2) }
 
+    // Filter lectures with lectureId from 9 to 23
+    val lectureTitles = LectureRepository.lectures.filter { it.lectureId.toInt() in 9..23 }.map { it.lectureTitle }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -168,18 +171,6 @@ fun OpicAdvancedSection(navController: NavHostController) {
                 }
             }
 
-            // 강의 제목 리스트
-            val lectureTitles = listOf(
-                "Introduction to Business English",
-                "Advanced Presentation Skills",
-                "Meeting Etiquette",
-                "Office Communication",
-                "Negotiation Tactics",
-                "Cultural Sensitivity in Business",
-                "Email Writing Skills",
-                "Customer Service Excellence"
-            )
-
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -193,7 +184,7 @@ fun OpicAdvancedSection(navController: NavHostController) {
                         title = lectureTitles[0],
                         subtitle = "Updated today",
                         navController = navController,
-                        lectureId = "0",
+                        lectureId = "1",
                         modifier = Modifier.fillMaxWidth()
                     )
                 }

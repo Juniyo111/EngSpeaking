@@ -2,17 +2,7 @@ package com.example.engspeaking
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -20,25 +10,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Card
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScrollableTabRow
-import androidx.compose.material3.Tab
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,6 +33,8 @@ import com.example.engspeaking.components.CourseItem
 fun BusinessSection(navController: NavHostController) {
     var selectedTabIndex by remember { mutableStateOf(3) }
     var selectedTopicIndex by remember { mutableStateOf(-1) }
+
+    val lectures = LectureRepository.lectures.filter { it.lectureId.toInt() in 1..8 }
 
     Scaffold(
         topBar = {
@@ -168,18 +145,8 @@ fun BusinessSection(navController: NavHostController) {
                 }
             }
 
-
-            // 강의 제목 리스트
-            val lectureTitles = listOf(
-                "Introduction to Business English",
-                "Advanced Presentation Skills",
-                "Meeting Etiquette",
-                "Office Communication",
-                "Negotiation Tactics",
-                "Cultural Sensitivity in Business",
-                "Email Writing Skills",
-                "Customer Service Excellence"
-            )
+            // Retrieve lecture titles from LectureRepository
+            val lectures = LectureRepository.lectures
 
             LazyColumn(
                 modifier = Modifier
@@ -191,15 +158,15 @@ fun BusinessSection(navController: NavHostController) {
                 }
                 item {
                     FirstLecCard(
-                        title = lectureTitles[0],
+                        title = lectures[0].lectureTitle,
                         subtitle = "Updated today",
                         navController = navController,
-                        lectureId = "0",
+                        lectureId = lectures[0].lectureId,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-                items(lectureTitles) { title ->
-                    val index = lectureTitles.indexOf(title)
+                items(lectures) { lecture ->
+                    val index = lectures.indexOf(lecture)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -207,20 +174,20 @@ fun BusinessSection(navController: NavHostController) {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         LectureCard(
-                            title = title,
+                            title = lecture.lectureTitle,
                             subtitle = "Updated today",
                             modifier = Modifier.weight(1f),
                             navController = navController,
-                            lectureId = index.toString()
+                            lectureId = lecture.lectureId
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        if (index + 1 < lectureTitles.size) {
+                        if (index + 1 < lectures.size) {
                             LectureCard(
-                                title = lectureTitles[index + 1],
+                                title = lectures[index + 1].lectureTitle,
                                 subtitle = "Updated today",
                                 modifier = Modifier.weight(1f),
                                 navController = navController,
-                                lectureId = (index + 1).toString()
+                                lectureId = lectures[index + 1].lectureId
                             )
                         }
                     }

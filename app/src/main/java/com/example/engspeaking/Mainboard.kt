@@ -69,6 +69,8 @@ class Mainboard : ComponentActivity() {
             EngSpeakingTheme {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = "mainboard") {
+                    composable("login") { LoginScreen(navController = navController) } // Add login screen route
+                    composable("signup") { SignUpScreen(navController = navController) } // Add sign-up screen route
                     composable("mainboard") { MainScreen(navController = navController) }
                     composable("personal_info") { PersonalInfoScreen() }
                     composable("settings") { SettingsScreen() }
@@ -101,10 +103,12 @@ class Mainboard : ComponentActivity() {
                     composable("speaking_material") { SpeakingStudyMaterialSection(navController = navController) }
                     composable("opic_exam_schedule") { OpicTestSchedule() }
                     composable("toeic_exam_schedule") { ToeicTestSchedule() }
+                    composable("qandr") { QAndRScreen(navController = navController) }
 
 
-                    composable("LectureDetailSection/{lectureId}/{lectureTitle}") { backStackEntry ->
-                        val lectureId = backStackEntry.arguments?.getString("lectureId")
+                    composable("lecture/{lectureId}/{lectureTitle}") { backStackEntry ->
+
+                    val lectureId = backStackEntry.arguments?.getString("lectureId")
                         val lectureTitle = backStackEntry.arguments?.getString("lectureTitle")
                         LectureDetailSection(
                             navController = navController,
