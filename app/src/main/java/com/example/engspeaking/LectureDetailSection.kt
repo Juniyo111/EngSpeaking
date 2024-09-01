@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -98,6 +99,15 @@ fun LectureDetailSection(
             Text(text = "Lecture ID: $lectureId", fontSize = 16.sp)
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "Lecture Title: $lectureTitle", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = { navController.navigate("qandr") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+            ) {
+                Text("질문에 대한 영문 답변하러 가기")
+            }
         }
     }
 }
@@ -107,3 +117,29 @@ fun getVideoUrlForLecture(lectureId: String?): String {
     return "https://www.example.com/video/$lectureId.mp4" // Example URL format
 }
 
+@Preview(showBackground = true, widthDp = 400, heightDp = 800)
+@Composable
+fun LectureDetailSectionPreview() {
+    val navController = rememberNavController()
+    Scaffold { innerPadding -> // Capture the contentPadding from Scaffold
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding) // Apply the innerPadding to avoid overlapping
+                .padding(16.dp) // Additional padding for internal spacing
+        ) {
+            Text(text = "Lecture ID: 0", fontSize = 16.sp)
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "강의 제목: 샘플 강의", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = { /* Do nothing for preview */ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+            ) {
+                Text("질문에 대한 영문 답변하러 가기")
+            }
+        }
+    }
+}

@@ -101,6 +101,7 @@ class Mainboard : ComponentActivity() {
                     composable("speaking_material") { SpeakingStudyMaterialSection(navController = navController) }
                     composable("opic_exam_schedule") { OpicTestSchedule() }
                     composable("toeic_exam_schedule") { ToeicTestSchedule() }
+                    composable("qandr") { QAndRScreen(navController = navController) }
 
 
                     composable("LectureDetailSection/{lectureId}/{lectureTitle}") { backStackEntry ->
