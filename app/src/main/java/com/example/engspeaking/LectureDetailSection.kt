@@ -1,6 +1,5 @@
 package com.example.engspeaking
 
-import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -8,7 +7,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,6 +21,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.MediaItem as ExoMediaItem
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -33,10 +35,16 @@ fun LectureDetailSection(
     lectureId: String?,
     lectureTitle: String? // Lecture title passed from the NavHost
 ) {
-    // Get the current context to use with Intents
     val context = LocalContext.current
-    // Get the video URL based on the lecture ID
-    val videoUrl = getVideoUrlForLecture(lectureId)
+    val videoUrl = getVideoUrlForLecture(lectureId) // Function to get video URL based on lectureId
+
+    // ExoPlayer instance to play the video
+    val exoPlayer = ExoPlayer.Builder(context).build().apply {
+        val mediaItem = ExoMediaItem.fromUri(Uri.parse(videoUrl)) // Construct MediaItem from video URL
+        setMediaItem(mediaItem)
+        prepare()
+        playWhenReady = true
+    }
 
     Scaffold(
         topBar = {
@@ -73,54 +81,29 @@ fun LectureDetailSection(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
+                .padding(paddingValues) // Apply padding values from Scaffold
+                .padding(16.dp) // Additional padding if needed
         ) {
+            // Video Player
+            AndroidView(factory = {
+                PlayerView(it).apply {
+                    player = exoPlayer
+                }
+            }, modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "Lecture ID: $lectureId", fontSize = 16.sp)
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "Lecture Title: $lectureTitle", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Button to Open YouTube Video
-            Button(
-                onClick = {
-                    // Create an intent to open the YouTube video in a browser or YouTube app
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
-                    context.startActivity(intent)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
-            ) {
-                Text("Watch Video on YouTube")
-            }
-
-            // Navigate to Q&A Section
-            Button(
-                onClick = { navController.navigate("qandr") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
-            ) {
-                Text("질문에 대한 영문 답변하러 가기")
-            }
         }
     }
 }
 
 // Function to get video URL based on lecture ID
 fun getVideoUrlForLecture(lectureId: String?): String {
-    return when (lectureId) {
-        "1" -> "https://www.youtube.com/watch?v=_wm3EELBJt4" // YouTube URL for Lecture ID 1
-        "2" -> "https://www.youtube.com/watch?v=w1uDMcIXCnY" // Another YouTube URL for Lecture ID 2
-        else -> "https://www.youtube.com/watch?v=w1uDMcIXCnY" // Default or fallback URL
-    }
+    return "https://www.example.com/video/$lectureId.mp4" // Example URL format
 }
 
-@Preview(showBackground = true, widthDp = 400, heightDp = 800)
-@Composable
-fun LectureDetailSectionPreview() {
-    val navController = rememberNavController()
-    LectureDetailSection(navController = navController, lectureId = "1", lectureTitle = "Sample Lecture")
-}
